@@ -1,0 +1,77 @@
+{% extends theme('includes/layout.html', false) %}
+{% block hero %}
+<div id="hero-wrapper">
+    <div id="hero-image-block" class="kolab-hero-image-pricing">
+        <div class="shadow"></div>
+        <div class="section container">
+            <div class="hero-content">
+                <div class="hero-content-inner">
+                    <h1>{{ _("Kolab Now") }}</h1>
+                    <div class="teaser">
+                        <p>
+                            {{ _("Collaborate in confidence with your own Kolab Now account.") }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock hero %}
+
+{% block content %}
+
+{% for product in products %}
+    {% if loop.index % 2 == 0 %}
+        <div class="row">
+
+            {% for _product in products[(loop.index-2):loop.index] %}
+                <!-- {{ _product.key }} //-->
+
+                <div class="col-sm-6">
+                    {% if _product.signup_enabled %}
+                        <div class="pricing-block type-{{ _product.key }}">
+                            <h2 class="block-title">{{ _product.name|gettext }}</h2>
+                            {{ _product.description|gettext|safe }}
+                            <div class="visible-xs-block lt-ie9-block">
+                                <div class="pricing-price">
+                                    {{ _("From") }} <span class="currency" data-value="{{ _product.bestprice }}">{{ currency }} {{ "{0:.2f}".format(_product.bestprice * exchange_rate) }}</span>
+                                </div>
+                                <div class="pricing-subline">{{ _("per month") }}</div>
+                                <a class="btn btn-primary type-{{ _product.key }}" href="{{ url_for('pack.signup.index', product=_product.key) }}#form">{{ _("Sign up now") }}</a>
+                                <p> </p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+            {% endfor %}
+
+        </div>
+        <div class="row">
+
+            {% for _product in products[(loop.index-2):loop.index] %}
+                <!-- {{ _product.key }} //-->
+
+                <div class="col-sm-6">
+                    {% if _product.signup_enabled %}
+                        <div class="pricing-block type-{{ _product.key }}">
+                            <div class="pricing-price">
+                                {{ _("From") }} <span class="currency" data-value="{{ _product.bestprice }}">{{ currency }} {{ "{0:.2f}".format(_product.bestprice * exchange_rate) }}</span>
+                            </div>
+                            <div class="pricing-subline">{{ _("per month") }}</div>
+                            <a class="btn btn-primary type-{{ _product.key }}" href="{{ url_for('pack.signup.index', product=_product.key) }}#form">{{ _("Sign up now") }}</a>
+                            <p> </p>
+                        </div>
+                    {% endif %}
+                </div>
+
+            {% endfor %}
+
+        </div>
+        <br clear="all" />
+        <br clear="all" />
+    {% endif %}{# if loop.index % 2 == 0 #}
+{% endfor %}{# product in products #}
+
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends 'includes/layout.html' %}
+{%- block title -%}
+{{ _("Our title here") }}
+{%- endblock title -%}
+
+{% block content %}
+{% endblock content %}
+
+{% block theme_assets %}
+    {% assets "demo_css" %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}" />
+    {% endassets %}
+    {% assets "demo_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+{% endblock theme_assets %}

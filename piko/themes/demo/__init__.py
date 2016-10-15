@@ -8,7 +8,7 @@ def noop(_in, out, **kw):
     out.write(_in.read())
 
 def register(assets, bundles):
-    bundles["default_js"] = Bundle(
+    bundles["demo_js"] = Bundle(
             "js/lib/jquery.js",
             "js/lib/bootstrap.js",
             "js/lib/jquery-ui.js",
@@ -17,7 +17,7 @@ def register(assets, bundles):
             output="assets/js/piko.js"
         )
 
-    bundles["default_css"] = Bundle(
+    bundles["demo_css"] = Bundle(
             "css/lib/bootstrap.css",
             "css/lib/jquery-ui.css",
             "css/lib/styles.css",
@@ -58,13 +58,13 @@ def register(assets, bundles):
     if not os.path.isdir(images_path):
         os.makedirs(images_path)
 
-    for font in glob.glob("piko/themes/default/static/fonts/*.*"):
+    for font in glob.glob("piko/themes/demo/static/fonts/*.*"):
         shutil.copy(font, fonts_path)
         #assets.add(Bundle(font, filters=(noop,), output="fonts/%s" % (os.path.basename(font))))
 
-    for image in glob.glob("piko/themes/default/static/images/*.*"):
+    for image in glob.glob("piko/themes/demo/static/images/*.*"):
         shutil.copy(image, images_path)
         #assets.add(Bundle(image, filters=(noop,), output="images/%s" % (os.path.basename(image))))
 
-
     return bundles
+
