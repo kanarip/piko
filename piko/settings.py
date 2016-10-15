@@ -23,6 +23,6 @@ LANGUAGES = ['en', 'nl']
 
 SECRET_KEY = os.urandom(24)
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///%s/pack.db' % (os.path.join(basepath(), 'tmp'))
+SQLALCHEMY_DATABASE_URI = 'sqlite:///%s/piko.db' % (os.path.join(basepath(), 'tmp'))
 SQLALCHEMY_ECHO = True
 
