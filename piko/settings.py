@@ -16,7 +16,10 @@ CACHE_TYPE = 'filesystem'
 
 DEBUG = True
 
+# Whatever theme you ship yourself, or 'default' or 'demo'
 DEFAULT_THEME = 'default'
+#DEFAULT_THEME = 'demo'
+
 THEME_PATHS = 'piko/themes'
 
 LANGUAGES = ['en', 'nl']
