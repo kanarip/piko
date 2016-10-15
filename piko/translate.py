@@ -1,4 +1,4 @@
-import gettext
+from flask.ext.babel import gettext
 
-_ = lambda x: gettext.gettext(x)
+_ = lambda x: gettext(x)
 

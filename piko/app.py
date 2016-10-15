@@ -50,8 +50,6 @@ class App(Flask):
 
         self.context_processor(self.context_processor_handler)
 
-        Babel(self)
-
         setup_themes(self)
 
         self.assets = Environment(self)

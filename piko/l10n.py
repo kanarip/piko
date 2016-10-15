@@ -10,6 +10,7 @@ from flask.ext.babel import gettext
 def register_l10n(app):
 
     babel = Babel(app)
+
     from piko.cache import cache
 
     @babel.localeselector
@@ -35,8 +36,6 @@ def register_l10n(app):
             result = 'en'
 
         g.locale = result
-
-        app.logger.debug("Selecting language: %r" % (g.locale))
 
         return g.locale
 
