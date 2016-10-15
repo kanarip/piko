@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pip freeze | awk -F'=' '{print $1}' | xargs -n 1 pip install --upgrade
+
+pip freeze > requirements.txt
