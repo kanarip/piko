@@ -1,5 +1,7 @@
 *.pyc
 *.swp
 docs/build/
+piko/static/assets/
+piko/static/.webassets-cache/
 tmp/
 venv/
