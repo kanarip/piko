@@ -1,0 +1,73 @@
+body {
+    font-family: Liberation Mono;
+}
+
+div#header_north_wrapper {
+    // Maintain as relative
+    position: relative;
+    top: 0px;
+    width: 100%;
+    clear: both;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+div#header_north_wrapper div#header_north_east {
+    float: left;
+    width: 60%;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+div#header_north_wrapper div#header_north_north_west {
+    float: left;
+    width: 20%;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+div#header_north_wrapper div#header_north_west {
+    float: left;
+    width: 20%;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+div#hero_wrapper {
+    border: 1px solid black;
+    clear: both;
+}
+
+div#page-wrapper {
+    position: relative;
+    clear: both;
+    top: 10px;
+    border: 1px solid black;
+    width: 98%;
+    margin-left: 1%;
+    padding: 10px;
+}
+
+div#page-wrapper div#page_header {
+    width: 98%;
+    margin-left: 1%;
+    padding: 10px;
+    clear: both;
+    text-align: center;
+    border: 1px solid black;
+}
+
+div#main-wrapper {
+    position: relative;
+    clear: both;
+    top: 10px;
+    border: 1px solid black;
+    width: 98%;
+    margin-left: 1%;
+    padding: 10px;
+}
+
+#messagesbox {
+    width: 100%;
+}
+

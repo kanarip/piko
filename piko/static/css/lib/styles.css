@@ -1,0 +1,484 @@
+select {
+	width: auto;
+	height: auto;
+	line-height: 1.2ex;
+	margin-bottom: 0;
+	padding: 2px 2px;
+}
+
+label {
+	cursor: default;
+}
+
+h1.pagetitle {
+	margin-bottom: 20px;
+}
+
+h4.errormessage {
+	margin-bottom: 20px;
+}
+
+pre em {
+	color: #d14;
+	font-style: normal;
+}
+
+code, kbd, pre, samp {
+	display: inline-block;
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-size: 13px;
+	background-color: #f5f5f5;
+	color: inherit;
+}
+
+.row {
+	z-index: 1;
+}
+
+.row.margin-after {
+	margin-bottom: 1em;
+}
+
+.hint {
+	color: #999;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+p.hint {
+	margin: 1em 0 1em 0.5em;
+}
+
+span.valign {
+	vertical-align: middle;
+}
+
+#messagesbox {
+	min-height: 50px;
+	z-index: 100;
+}
+
+#messagesbox .alert {
+	margin-bottom: 2px;
+}
+
+.innerbody {
+	margin-top: 52px;
+	margin-bottom: 30px;
+}
+/*
+.form-actions {
+	background: none;
+	border: 0;
+	padding: 0;
+}
+
+form .form-actions {
+	padding: 18px 20px 18px 0;
+}
+*/
+.payment-form-paypal .btn-primary,
+.payment-form-paypal .btn-primary:hover,
+.payment-form-paypal .btn-primary:focus {
+	background: url('https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif') top left no-repeat;
+	padding: 0;
+	width: 145px;
+	height: 25px;
+	overflow: hidden;
+	text-indent: -2000px;
+	border: 0;
+	box-shadow: none;
+	filter: none;
+}
+
+.lang-de .payment-form-paypal .btn-primary {
+	background: url('https://www.paypal.com/de_DE/i/btn/btn_xpressCheckout.gif') 0 -4px no-repeat;
+	height: 33px;
+}
+
+/** Bootstrap copy **/
+
+.form-group .controls textarea,
+.form-group .controls input[type='text'],
+.form-group .controls input[type='password'] {
+	display: inline-block;
+	height: 34px;
+	padding: 6px 12px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.form-group .controls textarea {
+	height: auto;
+}
+
+.form-group .controls input:focus {
+	border-color: #66afe9;
+	outline: 0;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+}
+
+.alert-error {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+.alert-error hr {
+  border-top-color: #e4b9c0;
+}
+.alert-error .alert-link {
+  color: #843534;
+}
+
+.form-horizontal h2,
+.form-horizontal h3 {
+	margin-left: 20px;
+}
+
+
+/** Bootstrap overrides **/
+
+.btn-group > .dropdown-menu + .btn:last-child {
+	border-radius: 4px;
+}
+
+.form-group select.form-control {
+	height: 34px;
+}
+
+.form-horizontal .radio input[type="radio"],
+.form-horizontal .checkbox input[type="checkbox"] {
+	position: relative;
+	margin-left: 2px;
+	margin-right: 4px;
+}
+
+span.form-control-static {
+	display: inline-block;
+}
+
+.input-inline {
+	display: inline-block;
+}
+
+.input-small {
+	width: 10em !important;
+}
+
+.input-mini {
+	width: 5em !important;
+}
+
+.input-large {
+	width: 18em !important;
+}
+
+.input-xlarge {
+	width: 30em !important;
+}
+
+input.incognito {
+	border: 0;
+	background: transparent;
+}
+
+/*
+.control-group {
+	margin-bottom: 0;
+}
+
+.control-group.disabled {
+	opacity: 0.4;
+	filter:alpha(opacity=40);
+}
+
+.form-horizontal .control-group {
+	margin-bottom: 10px;
+}
+*/
+
+.input-group-addon select {
+	height: auto;
+	padding: 0;
+	margin: -1px 0 -2px 0;
+}
+
+.form-group.has-success .input-group-addon {
+	padding-right: 32px;
+}
+
+.form-narrow .form-group {
+	margin-bottom: 8px;
+}
+
+.form-boxed {
+	background: #ebebeb;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding-top: 10px;
+}
+
+a.form-toggle {
+	display: inline-block;
+	margin-bottom: 4px;
+}
+
+a.form-toggle:after {
+	content: " ▼";
+	font-size: 80%;
+}
+
+a.form-toggle.collapsed:after {
+	content: " ▶";
+}
+
+.inline-checkbox input {
+	margin: 0 0.5em 0 0;
+}
+
+.form-group span.formerror {
+	color: #a94442;
+	margin-bottom: 0;
+}
+
+.form-group input[type='radio'] + span.hint {
+	margin-left: 0.5em;
+}
+
+td.rightalign,
+th.rightalign,
+input.rightalign,
+td.currency,
+th.currency,
+input.currency {
+	text-align: right;
+}
+
+.recordview {
+	border-top: 1px solid #ddd;
+	margin-bottom: 1.5em;
+}
+
+.recordview .line {
+	padding: 4px 0;
+	border-bottom: 1px solid #ddd;
+	background: #fff;
+}
+
+.recordview .line.odd {
+	background: #f7f7f7;
+}
+
+label.inline,
+.recordview .line label {
+	display: inline-block;
+	min-width: 10em;
+	padding: 0 5px;
+	margin: 0;
+	color: #666;
+}
+
+.recordview .block label {
+	float: left;
+}
+
+.recordview .block .value {
+	display: block;
+	margin-left: 11em;
+}
+
+.modal-header h2 {
+	margin: 0;
+}
+
+/**** list input widget ****/
+
+.list-widget-row {
+	padding-top: 5px;
+}
+
+.list-widget .btn {
+	margin-left: 5px;
+	padding: 4px 8px;
+}
+
+.control-group.error .list-widget input {
+	border: 1px solid #CCCCCC;
+	color: #555;
+}
+
+.control-group.error .list-widget input:focus {
+  border-color: rgba(82, 168, 236, 0.8);
+  outline: 0;
+  outline: thin dotted \9;
+  /* IE6-9 */
+
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+.control-group.error .list-widget input.error {
+	border-color: #B94A48;
+	color: #B94A48;
+}
+
+.control-group.error .list-widget input.error:focus {
+  border-color: #953b39;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+}
+
+/**** signup form ****/
+
+.tooltip-icon {
+	display: inline-block;
+	position: absolute;
+	top: 8px;
+	right: -16px;
+	cursor: pointer;
+}
+
+.control-group .append,
+.control-group .formlabel,
+.control-group .expirydate {
+	display: inline-block;
+	position: relative;
+	top: 3px;
+	margin-left: 0.6em;
+}
+
+.control-group .price {
+	color: #999;
+}
+
+.control-group .foreign.currency {
+	color: #777;
+	margin-left: 1.5em;
+	font-style: italic;
+}
+
+#quotaslider {
+	display: inline-block;
+	position: relative;
+	top: 8px;
+	width: 99%;
+	margin-right: 1em;
+	line-height: 1em;
+}
+
+#recaptcha_widget_div {
+	margin-top: 1em;
+}
+
+.password-reset .control-label {
+	width: 200px;
+}
+
+.password-reset .controls {
+	margin-left: 220px;
+}
+
+.password-reset .form-actions {
+	padding-top: 10px;
+	padding-left: 220px;
+}
+
+.tosdr {
+	background-color: #EEEEEE;
+	border: 1px solid #DDDDDD;
+	border-radius: 1em;
+	font-size: 11px;
+	margin-left: 3em;
+	padding: 2px 2px 2px 8px;
+}
+
+.tosdr span {
+	padding-left: 20px;
+	line-height: 24px;
+	text-shadow: 1px 1px white;
+	background: url(../img/tosdr-icon-16.png) 0 center no-repeat;
+}
+
+a.tosdr-class {
+	margin-left: .5em;
+	background-color: #46A546;
+	color: white;
+	border-radius: 1em 1em 1em 1em;
+	font-weight: bold;
+	padding: 1px 8px;
+	text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
+}
+
+a.tosdr-class:hover {
+	text-decoration: none;
+	color: white;
+}
+
+/**** billing / payment ****/
+
+.invoices td.buttons {
+	text-align: right;
+	padding: 0.3em 0;
+}
+
+.invoice-head {
+	margin: 1em 0;
+	padding: 0.5em 1em;
+	background: #ebebeb;
+}
+
+.invoice-address {
+	float: right;
+	max-width: 45%;
+}
+
+.invoice-head .control-group {
+	padding: 0.3em 0;
+	margin: 0 30% 0 0;
+}
+
+.invoice-head .property {
+	display: inline-block;
+	min-width: 9em;
+	margin-right: 1em;
+	white-space: nowrap;
+}
+
+.invoice-head .value {
+	display: inline-block;
+	font-weight: bold;
+}
+
+.invoice-head .value.paid {
+	color: #0a0;
+}
+
+.invoice-items tr.total td {
+	border-top: 1px solid #000;
+	font-weight: bold;
+}
+
+/**** hosting configuration ****/
+
+table.domains td.domain {
+	width: 50%;
+}
+
+table.users td.actions {
+	text-align: right;
+}
+
