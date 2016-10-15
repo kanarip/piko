@@ -24,7 +24,7 @@ Getting Started
 
     .. parsed-literal::
 
-        $ command:`pip install -r requirements.txt`
+        $ :command:`pip install -r requirements.txt`
 
 #.  Run the standalone server:
 
