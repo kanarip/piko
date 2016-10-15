@@ -1,0 +1,5 @@
+==========
+``cssmin``
+==========
+
+.. automodule:: cssmin

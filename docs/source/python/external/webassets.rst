@@ -1,0 +1,5 @@
+=============
+``webassets``
+=============
+
+.. automodule:: webassets

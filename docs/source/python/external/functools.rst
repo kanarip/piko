@@ -1,0 +1,5 @@
+=============
+``functools``
+=============
+
+.. automodule:: functools

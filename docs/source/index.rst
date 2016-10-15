@@ -7,7 +7,6 @@ piko -- for the smaller things
 
     getting-started
 
-
 Indices and tables
 ==================
 

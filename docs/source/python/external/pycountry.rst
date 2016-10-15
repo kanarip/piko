@@ -1,0 +1,5 @@
+=============
+``pycountry``
+=============
+
+.. automodule:: pycountry

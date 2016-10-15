@@ -1,0 +1,5 @@
+=========
+``jsmin``
+=========
+
+.. automodule:: jsmin

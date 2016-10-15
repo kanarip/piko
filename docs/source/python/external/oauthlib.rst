@@ -1,0 +1,5 @@
+=====================
+``openexchangerates``
+=====================
+
+.. automodule:: openexchangerates

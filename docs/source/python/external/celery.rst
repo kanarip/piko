@@ -1,0 +1,5 @@
+==========
+``celery``
+==========
+
+.. automodule:: celery
