@@ -21,6 +21,15 @@
     <body>
         <a name="top"></a>
 
+        <div id="nav-header">
+            {% if g.user %}
+            <a href="{{ url_for('piko.profile') }}">{{ _("Profile") }}</a>
+            <a href="{{ url_for('piko.logout') }}">{{ _("Logout") }}</a>
+            {% else %}
+            <a href="{{ url_for('piko.login') }}">{{ _("Login") }}</a>
+            {% endif %}
+        </div>
+
         <!-- begin default_assets //-->
 
         {% assets "default_css" %}
@@ -47,6 +56,7 @@
             <tr><td>{{ _("Country of origin:") }}</td><td>__GEOIP_COUNTRY__</td></tr>
             <tr><td>{{ _("Currency:") }}</td><td>__I18N_CURRENCY__</td></tr>
             <tr><td>{{ _("Language:") }}</td><td>__L10N_LANGUAGE__</td></tr>
+            <tr><td>Cached on:</td><td>{{ g.before_request }}</td></tr>
         </table>
     </body>
 </html>

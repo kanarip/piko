@@ -19,6 +19,7 @@ from flask.ext.assets import Environment
 
 from flask.ext.babel import Babel
 from flask.ext.babel import gettext
+from flask.ext.htmlmin import HTMLMIN
 from flask.ext.themes import setup_themes
 
 from functools import wraps
@@ -70,6 +71,7 @@ class App(Flask):
             bundles = theme_mod.register(self.assets, bundles)
 
         self.assets.register(bundles)
+        HTMLMIN(self)
 
     def register_blueprint(self, *args, **kwargs):
         super(App, self).register_blueprint(*args, **kwargs)
@@ -82,18 +84,23 @@ class App(Flask):
             Executed after a request has been handled, but the response
             has not yet been sent out.
         """
+        from piko.i18n import country_by_ipaddr
+        from piko.i18n import currency_by_ipaddr
+
         g.after_request = time.time()
+
         diff = g.after_request - g.before_request
-        country = 'CH'
-        currency = 'CHF'
-        language = g.locale
+
+        country = country_by_ipaddr(request.remote_addr)
+        currency = currency_by_ipaddr(request.remote_addr)
+        locale = getattr(g, 'locale', None)
 
         try:
             if (response.response):
                 response.response[0] = response.response[0].replace('__EXECUTION_TIME__', str(diff))
                 response.response[0] = response.response[0].replace('__GEOIP_COUNTRY__', country)
                 response.response[0] = response.response[0].replace('__I18N_CURRENCY__', currency)
-                response.response[0] = response.response[0].replace('__L10N_LANGUAGE__', language)
+                response.response[0] = response.response[0].replace('__L10N_LANGUAGE__', locale)
         except:
             pass
 
@@ -105,12 +112,11 @@ class App(Flask):
         """
         g.before_request = time.time()
 
-        g.user = None
-        g.locale = None
-        g.timezone = None
-
         if not 'uuid' in session:
             session['uuid'] = uuid.uuid4().hex
+
+        if 'locale' in session:
+            g.locale = session['locale']
 
         if 'account_id' in session and not request.path.startswith('/static/'):
 

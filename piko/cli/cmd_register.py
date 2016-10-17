@@ -4,6 +4,7 @@ import commands
 
 import piko
 
+from piko import utils
 from piko.translate import _
 
 log = piko.getLogger('piko.cli.register')
@@ -17,16 +18,7 @@ def __init__():
         )
 
 def cli_options():
-    my_option_group = conf.add_cli_parser_option_group(_("CLI Options"))
-    my_option_group.add_option(
-                '-u', '--user',
-                action  = "store",
-                type    = str,
-                default = None,
-                metavar = "USERNAME",
-                help    = _("Your username.")
-            )
-
+    pass
 
 def description():
     return _("Register with your favorite piko.")
@@ -35,13 +27,15 @@ def execute(*args, **kw):
     """
         Register with your favorite piko.
     """
-    assert(conf.user)
 
-    from piko.client import request
+    print utils.multiline_message(
+            "Navigate to %s%s and obtain a token." % (
+                    conf.get('piko', 'server_uri').rstrip('/'),
+                    '/candlepin/register'
+                )
+        )
 
-    payload = {
-            "name": conf.name
-        }
+    sys.stdout.flush()
 
-    content = request(method='POST', path='/register', post=payload)
+    token = utils.ask_question("Token")
 

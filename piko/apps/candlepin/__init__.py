@@ -1,6 +1,7 @@
 import os
 
 from piko import App
+from piko.authn import login_required
 
 template_path = os.path.abspath(
         os.path.join(
@@ -37,3 +38,10 @@ def register_routes(app):
     @app.route('/')
     def index():
         return app.render_template('candlepin/index.html')
+
+    @app.route('/register', methods = [ 'POST' ])
+    def register():
+        """
+            A human being issues a command-line register.
+        """
+        return "magic token"

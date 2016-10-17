@@ -33,9 +33,11 @@ DEBUG = True
 DEFAULT_THEME = 'default'
 #DEFAULT_THEME = 'demo'
 
-THEME_PATHS = 'piko/themes'
+#FAKE_COUNTRY = 'NL'
 
 LANGUAGES = ['en', 'nl']
+
+MINIFY_PAGE = True
 
 SECRET_KEY = os.urandom(24)
 
@@ -43,4 +45,6 @@ SECRET_KEY = os.urandom(24)
 SQLALCHEMY_DATABASE_URI = 'mysql://piko:piko@127.0.0.1/piko_dev'
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 SQLALCHEMY_ECHO = True
+
+THEME_PATHS = 'piko/themes'
 

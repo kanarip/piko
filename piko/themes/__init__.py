@@ -24,18 +24,7 @@ def render_theme_template(theme, template, locale, country, currency, user, _fla
         :param  kwargs:     The context to pass on to the template.
     """
 
-    apps = [
-            {
-                    "href": "/",
-                    "title": "Home"
-                },
-            {
-                    "href": "/login",
-                    "title": "Login"
-                }
-        ]
-
-    return _render_theme_template(theme, template, lang=locale, country=country, currency=currency, apps=apps, **kwargs)
+    return _render_theme_template(theme, template, lang=locale, country=country, currency=currency, **kwargs)
 
 def render_template(template, country=None, currency=None, **kwargs):
     """
@@ -72,10 +61,7 @@ def render_template(template, country=None, currency=None, **kwargs):
     for c,m in flashes:
         _flash += "%r/%r" % (c,m)
 
-    if not hasattr(g, 'locale'):
-        locale = 'en'
-    else:
-        locale = g.get('locale', 'en')
+    locale = g.get('locale', 'en')
 
     return render_theme_template(theme, template, locale, country, currency, user, _flash, **kwargs)
 

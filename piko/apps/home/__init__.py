@@ -1,6 +1,7 @@
 import os
 
 from piko import App
+from piko.authn import login_required
 
 template_path = os.path.abspath(
         os.path.join(
@@ -30,3 +31,18 @@ def register_routes(app):
     @app.route('/')
     def index():
         return app.render_template('index.html')
+
+    @app.route('/login')
+    def login():
+        return app.render_template('index.html')
+
+    @login_required
+    @app.route('/logout')
+    def logout():
+        return app.render_template('index.html')
+
+    @login_required
+    @app.route('/profile')
+    def profile():
+        return app.render_template('index.html')
+

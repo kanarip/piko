@@ -1,5 +1,6 @@
 from flask import g
 from flask import request
+from flask import session
 
 from flask.ext.babel import Babel
 from flask.ext.babel import get_locale as get_babel_locale
@@ -17,8 +18,8 @@ def register_l10n(app):
     def get_locale():
         locale = getattr(g, 'locale', None)
 
-        if not locale == None:
-            return locale
+        #if locale is not None:
+        #    return locale
 
         try:
             translations = get_translations()
@@ -34,8 +35,10 @@ def register_l10n(app):
 
         if result == None:
             result = 'en'
+        else:
+            g.locale = result
 
-        g.locale = result
+        session['locale'] = g.get('locale')
 
         return g.locale
 
