@@ -21,6 +21,8 @@
     <body>
         <a name="top"></a>
 
+        <!-- begin default_assets //-->
+
         {% assets "default_css" %}
             <link rel="stylesheet" href="{{ ASSET_URL }}" />
         {% endassets %}
@@ -28,6 +30,8 @@
         {% assets "default_js" %}
             <script type="text/javascript" src="{{ ASSET_URL }}"></script>
         {% endassets %}
+
+        <!-- end default_assets //-->
 
         <!-- begin theme_assets //-->
 
@@ -38,7 +42,12 @@
 
         <br clear="all">
         <hr>
-        <div>{{ _("Time to execute:") }} __EXECUTION_TIME__</div>
+        <table>
+            <tr><td>{{ _("Time to execute:") }}</td><td>__EXECUTION_TIME__</td></tr>
+            <tr><td>{{ _("Country of origin:") }}</td><td>__GEOIP_COUNTRY__</td></tr>
+            <tr><td>{{ _("Currency:") }}</td><td>__I18N_CURRENCY__</td></tr>
+            <tr><td>{{ _("Language:") }}</td><td>__L10N_LANGUAGE__</td></tr>
+        </table>
     </body>
 </html>
 

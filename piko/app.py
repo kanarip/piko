@@ -84,10 +84,16 @@ class App(Flask):
         """
         g.after_request = time.time()
         diff = g.after_request - g.before_request
+        country = 'CH'
+        currency = 'CHF'
+        language = g.locale
 
         try:
             if (response.response):
                 response.response[0] = response.response[0].replace('__EXECUTION_TIME__', str(diff))
+                response.response[0] = response.response[0].replace('__GEOIP_COUNTRY__', country)
+                response.response[0] = response.response[0].replace('__I18N_CURRENCY__', currency)
+                response.response[0] = response.response[0].replace('__L10N_LANGUAGE__', language)
         except:
             pass
 
@@ -103,8 +109,6 @@ class App(Flask):
         g.locale = None
         g.timezone = None
 
-        register_l10n(self)
-
         if not 'uuid' in session:
             session['uuid'] = uuid.uuid4().hex
 
@@ -115,7 +119,7 @@ class App(Flask):
 
             try:
                 account = db.session.query(Account).get(session['account_id'])
-            except Exception:
+            except Exception, errmsg:
                 db.session.rollback()
                 account = db.session.query(Account).get(session['account_id'])
 
@@ -126,6 +130,8 @@ class App(Flask):
                 g.user = account.id
                 g.locale = account.locale
                 g.timezone = account.timezone
+
+        register_l10n(self)
 
     def context_processor_handler(self):
         """

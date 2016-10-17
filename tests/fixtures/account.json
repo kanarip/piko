@@ -1,0 +1,15 @@
+[
+        {
+                "table": "account",
+                "records": [
+                        {
+                                "id": 1,
+                                "_name": "john.doe@example.org",
+                                "type_name": "email",
+                                "password_hash": "simple at 18 rounds",
+                                "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m",
+                                "remote_id": "-1"
+                            }
+                    ]
+            }
+    ]

@@ -18,10 +18,6 @@ from .kb.article import KBArticle
 from .kb.view import KBView
 from .kb.vote import KBVote
 
-from .oauth2 import OAuth2Client
-from .oauth2 import OAuth2Grant
-from .oauth2 import OAuth2Token
-
 from .otp import HOTPToken
 from .otp import TANToken
 from .otp import TOTPToken
@@ -34,9 +30,6 @@ __all__ = [
         'KBArticle',
         'KBView',
         'KBVote',
-        'OAuth2Client',
-        'OAuth2Grant',
-        'OAuth2Token',
         'Product',
         'Role',
         'Session',

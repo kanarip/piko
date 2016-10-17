@@ -57,6 +57,14 @@ manager.add_command('assets', ManageAssets)
 manager.add_command('db', MigrateCommand)
 
 @manager.command
+def create_db():
+    db.create_all()
+
+@manager.command
+def drop_db():
+    db.drop_all()
+
+@manager.command
 def init_translations():
     from subprocess import call
 
@@ -86,6 +94,20 @@ def init_translations():
                        lang
                    ]
            )
+
+@manager.command
+def load_fixtures():
+    import glob
+    from flask_fixtures.loaders import JSONLoader
+    from flask_fixtures import load_fixtures
+
+    db.drop_all()
+    db.create_all()
+
+    for fixture_dir in app.config.get('FIXTURES_DIRS', ['./tests/fixtures/']):
+        for fixture_file in glob.glob(fixture_dir + '/*.json'):
+            fixtures = JSONLoader().load(fixture_file)
+            load_fixtures(db, fixtures)
 
 @manager.command
 def update_translations():
@@ -172,20 +194,6 @@ def test():
 
     p1.terminate()
     p1.wait()
-
-@manager.command
-def load_fixtures():
-    import glob
-    from flask_fixtures.loaders import JSONLoader
-    from flask_fixtures import load_fixtures
-
-    db.drop_all()
-    db.create_all()
-
-    for fixture_dir in app.config.get('FIXTURES_DIRS', ['./tests/fixtures/']):
-        for fixture_file in glob.glob(fixture_dir + '/*.json'):
-            fixtures = JSONLoader().load(fixture_file)
-            load_fixtures(db, fixtures)
 
 if __name__ == "__main__":
     manager.run()

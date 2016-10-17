@@ -1,0 +1,33 @@
+[
+        {
+                "table": "candlepin_system",
+                "records": [
+                        {
+                                "id": 1,
+                                "uuid": "8c355025-d5a4-4773-b627-b599af452d35"
+                            }
+                    ]
+            },
+
+        {
+                "table": "candlepin_product",
+                "records": [
+                        {
+                                "id": 1,
+                                "key": "kolab-14",
+                                "name": "Kolab Enterprise 14"
+                            }
+                    ]
+            },
+
+        {
+                "table": "candlepin_entitlement",
+                "records": [
+                        {
+                                "id": 1,
+                                "system_id": 1,
+                                "product_id": 1
+                            }
+                    ]
+            }
+    ]

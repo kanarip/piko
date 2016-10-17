@@ -45,11 +45,11 @@ for candidate in os.listdir(base_path):
 
     except ImportError, errmsg:
         import traceback
-        app.logger.error("ImportError: %r" % (errmsg))
+        app.logger.error("ImportError for %s: %r" % (mod_name, errmsg))
         app.logger.error("%s" % (traceback.format_exc()))
 
     except AttributeError, errmsg:
         import traceback
-        app.logger.error("AttributeError: %r" % (errmsg))
+        app.logger.error("AttributeError for %s: %r" % (mod_name, errmsg))
         app.logger.error("%s" % (traceback.format_exc()))
 

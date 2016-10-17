@@ -8,8 +8,11 @@ from flask.ext.themes import get_themes_list
 from flask.ext.themes import setup_themes
 
 from piko import App
+from piko.cache import cache
+
 app = App('piko')
 
+@cache.memoize()
 def render_theme_template(theme, template, locale, country, currency, user, _flash, **kwargs):
     """
         A cacheable, theme-based, language specific proxy function to

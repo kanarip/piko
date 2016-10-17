@@ -9,21 +9,21 @@ def noop(_in, out, **kw):
 
 def register(assets, bundles):
     bundles["demo_js"] = Bundle(
-            "js/lib/jquery.js",
-            "js/lib/bootstrap.js",
-            "js/lib/jquery-ui.js",
-            "js/piko.js",
+#            "js/lib/jquery.js",
+#            "js/lib/bootstrap.js",
+#            "js/lib/jquery-ui.js",
+            "../themes/demo/static/js/demo.js",
             filters='jsmin',
-            output="assets/js/piko.js"
+            output="assets/js/demo.js"
         )
 
     bundles["demo_css"] = Bundle(
-            "css/lib/bootstrap.css",
-            "css/lib/jquery-ui.css",
-            "css/lib/styles.css",
-            "css/piko.css",
+#            "css/lib/bootstrap.css",
+#            "css/lib/jquery-ui.css",
+#            "css/lib/styles.css",
+            "../themes/demo/static/css/demo.css",
             filters='cssmin',
-            output="assets/css/piko.css"
+            output="assets/css/demo.css"
         )
 
     fonts_path = os.path.abspath(

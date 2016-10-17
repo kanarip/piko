@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+development = os.path.isdir(
+        os.path.abspath(
+                os.path.join(
+                        os.path.dirname(__file__),
+                        ".."
+                    )
+            )
+    )
+
+if development:
+    sys.path.insert(0, '.')
+
+from piko.translate import _
+from piko.cli import Cli
+
+def main():
+    piko_cli = Cli()
+    piko_cli.run()
+
+if __name__ == "__main__":
+    main()
+

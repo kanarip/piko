@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-10-15 12:19+0200\n"
+"POT-Creation-Date: 2016-10-15 15:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,54 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: piko/templates/index.html:1
+#: piko/templates/index.html:3
 msgid "Hello world"
+msgstr ""
+
+#: piko/templates/includes/layout.html:6
+msgid "Your title here"
+msgstr ""
+
+#: piko/templates/includes/layout.html:46
+msgid "Time to execute:"
+msgstr ""
+
+#: piko/templates/includes/layout.html:47
+msgid "Country of origin:"
+msgstr ""
+
+#: piko/templates/includes/layout.html:48
+msgid "Currency:"
+msgstr ""
+
+#: piko/templates/includes/layout.html:49
+msgid "Language:"
+msgstr ""
+
+#: piko/themes/demo/templates/index.html:9
+msgid "Kolab Now"
+msgstr ""
+
+#: piko/themes/demo/templates/index.html:12
+msgid "Collaborate in confidence with your own Kolab Now account."
+msgstr ""
+
+#: piko/themes/demo/templates/index.html:38
+#: piko/themes/demo/templates/index.html:60
+msgid "From"
+msgstr ""
+
+#: piko/themes/demo/templates/index.html:40
+#: piko/themes/demo/templates/index.html:62
+msgid "per month"
+msgstr ""
+
+#: piko/themes/demo/templates/index.html:41
+#: piko/themes/demo/templates/index.html:63
+msgid "Sign up now"
+msgstr ""
+
+#: piko/themes/demo/templates/includes/layout.html:3
+msgid "Our title here"
 msgstr ""
 
