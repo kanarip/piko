@@ -21,11 +21,11 @@ class TOTPToken(OTPToken, db.Model):
     def __init__(self, *args, **kwargs):
         super(TOTPToken, self).__init__(*args, **kwargs)
 
-        _id = (int)(uuid.uuid4().int / 2**96)
+        _id = (int)(uuid.uuid4().int / 2**97)
 
         if db.session.query(TOTPToken).get(_id) is not None:
             while db.session.query(TOTPToken).get(_id) is not None:
-                _id = (int)(uuid.uuid4().int / 2**96)
+                _id = (int)(uuid.uuid4().int / 2**97)
 
         self.id = _id
 

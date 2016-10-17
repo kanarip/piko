@@ -17,3 +17,5 @@ class Product(db.Model):
 
     #: End of Life
     eol = db.Column(db.DateTime)
+
+    product_id = db.Column(db.Integer, db.ForeignKey('candlepin_entitlement.id', ondelete='CASCADE'), nullable=True, default=None)

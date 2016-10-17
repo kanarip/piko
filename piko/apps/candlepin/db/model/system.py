@@ -8,14 +8,18 @@ class System(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(36), index=True)
 
+    customer_id = db.Column(db.Integer, db.ForeignKey('candlepin_customer.id', ondelete='CASCADE'))
+
+    customer = db.relationship('Customer')
+
     def __init__(self, *args, **kwargs):
         super(System, self).__init__(*args, **kwargs)
 
-        _id = (int)(uuid4().int / 2**96)
+        _id = (int)(uuid4().int / 2**97)
 
         if db.session.query(System).get(_id) is not None:
             while db.session.query(System).get(_id) is not None:
-                _id = (int)(uuid4().int / 2**96)
+                _id = (int)(uuid4().int / 2**97)
 
         self.id = _id
 

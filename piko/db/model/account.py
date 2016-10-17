@@ -77,11 +77,11 @@ class Account(db.Model):
     def __init__(self, *args, **kwargs):
         super(Account, self).__init__(*args, **kwargs)
 
-        _id = (int)(uuid.uuid4().int / 2**96)
+        _id = (int)(uuid.uuid4().int / 2**97)
 
         if db.session.query(Account).get(_id) is not None:
             while db.session.query(Account).get(_id) is not None:
-                _id = (int)(uuid.uuid4().int / 2**96)
+                _id = (int)(uuid.uuid4().int / 2**97)
 
         self.id = _id
 
