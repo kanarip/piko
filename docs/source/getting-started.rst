@@ -6,7 +6,7 @@ Getting Started
 
     .. parsed-literal::
 
-        # :command:`dnf install libffi-devel`
+        # :command:`dnf install libffi-devel mysql-devel`
 
 #.  Create a Python virtual environment:
 
