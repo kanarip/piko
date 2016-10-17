@@ -21,7 +21,8 @@ class Customer(db.Model):
 
         _id = (int)(uuid4().int / 2**96)
 
-        while len(db.session.query(Customer).get(_id)) > 0:
-            _id = (int)(uuid4().int / 2**96)
+        if db.session.query(Customer).get(_id) is not None:
+            while db.session.query(Customer).get(_id) is not None:
+                _id = (int)(uuid4().int / 2**96)
 
         self.id = _id

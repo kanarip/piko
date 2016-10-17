@@ -19,8 +19,8 @@ class HOTPToken(OTPToken, db.Model):
 
         _id = (int)(uuid.uuid4().int / 2**96)
 
-        if not db.session.query(HOTPToken).get(_id) == None:
-            while len(db.session.query(HOTPToken).get(_id)) > 0:
+        if db.session.query(HOTPToken).get(_id) is not None:
+            while db.session.query(HOTPToken).get(_id) is not None:
                 _id = (int)(uuid.uuid4().int / 2**96)
 
         self.id = _id

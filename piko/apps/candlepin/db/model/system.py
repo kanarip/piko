@@ -13,14 +13,16 @@ class System(db.Model):
 
         _id = (int)(uuid4().int / 2**96)
 
-        while len(db.session.query(System).get(_id)) > 0:
-            _id = (int)(uuid4().int / 2**96)
+        if db.session.query(System).get(_id) is not None:
+            while db.session.query(System).get(_id) is not None:
+                _id = (int)(uuid4().int / 2**96)
 
         self.id = _id
 
         uuid = uuid4().__str__()
 
-        while len(db.session.query(System).filter_by(uuid=uuid)) > 0:
-            uuid = uuid4().__str__()
+        if db.session.query(System).filter_by(uuid=uuid).first() is not None:
+            while db.session.query(System).filter_by(uuid=uuid).first() is not None:
+                uuid = uuid4().__str__()
 
         self.uuid = uuid
