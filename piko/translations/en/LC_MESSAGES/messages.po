@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-10-15 15:06+0200\n"
+"POT-Creation-Date: 2016-10-17 18:26+0200\n"
 "PO-Revision-Date: 2016-10-15 12:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,6 +18,120 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
+#: piko/__init__.py:28
+msgid "Returning thread local configuration"
+msgstr ""
+
+#: piko/conf.py:53
+msgid "Runtime Options"
+msgstr ""
+
+#: piko/conf.py:59
+msgid "Configuration file to use"
+msgstr ""
+
+#: piko/conf.py:67
+msgid ""
+"Set the debugging verbosity. Maximum is 9, tracing protocols like LDAP, "
+"SQL and IMAP."
+msgstr ""
+
+#: piko/conf.py:77
+msgid "Set the logging level. One of info, warn, error, critical or debug"
+msgstr ""
+
+#: piko/conf.py:87
+msgid "Be quiet."
+msgstr ""
+
+#: piko/conf.py:95
+msgid "Answer yes to all yes or no questions."
+msgstr ""
+
+#: piko/conf.py:131
+msgid "Insufficient options. Need section, key and value -in that order."
+msgstr ""
+
+#: piko/conf.py:134
+#, python-format
+msgid "No section '%s' exists."
+msgstr ""
+
+#: piko/conf.py:177
+#, python-format
+msgid "Could not execute configuration function: %s"
+msgstr ""
+
+#: piko/conf.py:221
+#, python-format
+msgid "Setting %s to %r (from CLI, verified)"
+msgstr ""
+
+#: piko/conf.py:224
+#, python-format
+msgid "Setting %s to %r (from CLI, not checked)"
+msgstr ""
+
+#: piko/conf.py:252
+#, python-format
+msgid "Setting %s to %r (from the default values for CLI options)"
+msgstr ""
+
+#: piko/utils.py:40 piko/utils.py:42
+#, python-format
+msgid "Confirm %s: "
+msgstr ""
+
+#: piko/utils.py:45
+msgid "Incorrect confirmation. Please try again."
+msgstr ""
+
+#: piko/utils.py:50 piko/utils.py:55
+#, python-format
+msgid "%s: "
+msgstr ""
+
+#: piko/utils.py:52 piko/utils.py:57
+#, python-format
+msgid "%s [%s]: "
+msgstr ""
+
+#: piko/apps/oauth/__init__.py:114 piko/apps/oauth/__init__.py:173
+#: piko/apps/oauth/__init__.py:232
+msgid "Login successful"
+msgstr ""
+
+#: piko/cli/__init__.py:62
+msgid "Interrupted"
+msgstr ""
+
+#: piko/cli/cmd_register.py:24
+msgid "Register with your favorite piko."
+msgstr ""
+
+#: piko/cli/commands.py:93
+#, python-format
+msgid "Command Group: %s"
+msgstr ""
+
+#: piko/cli/commands.py:108 piko/cli/commands.py:113
+msgid "No such command."
+msgstr ""
+
+#: piko/cli/commands.py:164
+#, python-format
+msgid "Command '%s' already registered"
+msgstr ""
+
+#: piko/cli/commands.py:189
+#, python-format
+msgid "Alias for %s"
+msgstr ""
+
+#: piko/cli/commands.py:197
+msgid "Not yet implemented"
+msgstr ""
+
 #: piko/templates/index.html:3
 msgid "Hello world"
 msgstr ""
@@ -26,19 +140,31 @@ msgstr ""
 msgid "Your title here"
 msgstr ""
 
-#: piko/templates/includes/layout.html:46
+#: piko/templates/includes/layout.html:26
+msgid "Profile"
+msgstr ""
+
+#: piko/templates/includes/layout.html:27
+msgid "Logout"
+msgstr ""
+
+#: piko/templates/includes/layout.html:29
+msgid "Login"
+msgstr ""
+
+#: piko/templates/includes/layout.html:55
 msgid "Time to execute:"
 msgstr ""
 
-#: piko/templates/includes/layout.html:47
+#: piko/templates/includes/layout.html:56
 msgid "Country of origin:"
 msgstr ""
 
-#: piko/templates/includes/layout.html:48
+#: piko/templates/includes/layout.html:57
 msgid "Currency:"
 msgstr ""
 
-#: piko/templates/includes/layout.html:49
+#: piko/templates/includes/layout.html:58
 msgid "Language:"
 msgstr ""
 
