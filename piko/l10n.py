@@ -35,12 +35,12 @@ def register_l10n(app):
 
         if result == None:
             result = 'en'
-        else:
-            g.locale = result
+
+        g.locale = result
 
         session['locale'] = g.get('locale')
 
-        return g.locale
+        return g.get('locale')
 
     @babel.timezoneselector
     def get_timezone():

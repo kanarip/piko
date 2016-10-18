@@ -1,0 +1,23 @@
+{% extends theme('includes/layout.html', true) %}
+{% block content %}
+{{ _("Waiting for the login sequence with Task ID %r to complete") % (task_id) }}
+{% endblock content %}
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(
+            function() {
+                    sse = new EventSource("{{ url_for('piko.login_verify', task_id=task_id) }}");
+                    sse.onmessage = function(message) {
+                            var $props = JSON.parse(message.data);
+                            if ($props['result']) {
+                                top.location = "{{ url_for('piko.login_complete') }}";
+                            } else if ($props['result'] !== null) {
+                                top.location = "{{ url_for('piko.login_complete') }}";
+                            } else {
+                                console.log("Result is null");
+                            }
+                        }
+                }
+        );
+</script>
+{% endblock footer %}

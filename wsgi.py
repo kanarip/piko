@@ -1,18 +1,32 @@
-#!/usr/bin/env python
+#!/bin/env python
 
 import os
+import sys
 
-#from flask.ext.socketio import SocketIO
-#from gevent import monkey
+sys.path.insert(0, '.')
+
+from flask.ext.assets import ManageAssets
+from flask.ext.babel import Babel
+from flask.ext.cache import Cache
+from flask.ext.migrate import Migrate, MigrateCommand
+from flask.ext.script import Manager
+from flask.ext.socketio import SocketIO
+
+from gevent import monkey
+
+from werkzeug.serving import run_simple
+from werkzeug.wsgi import DispatcherMiddleware
 
 from piko import App
+from piko.db import db
 
+#: The base application.
 app = App('piko')
 
-#socketio = SocketIO(app, async_mode='gevent')
-#monkey.patch_all()
+socketio = SocketIO(app, async_mode='gevent')
+monkey.patch_all()
 
-#: Holds registered applications.
+#: Holds the registered applications
 applications = {}
 
 #: The base path to search for additional applications.
@@ -44,9 +58,12 @@ for candidate in os.listdir(base_path):
         app.logger.error("AttributeError: %r" % (errmsg))
         app.logger.error("%s" % (traceback.format_exc()))
 
-#for name, blueprint in app.blueprints.iteritems():
-#    blueprint.socketio = socketio
+migrate = Migrate(app, db)
+cache = Cache(app, config = app.config)
+
+for name, blueprint in app.blueprints.iteritems():
+    blueprint.socketio = socketio
 
 if __name__ == "__main__":
-    #socketio.run(app, debug=True)
-    app.run()
+    socketio.run(app, debug=True)
+    #app.run(debug=True)

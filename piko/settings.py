@@ -11,19 +11,21 @@ def basepath():
                 )
         )
 
-#ASSETS_DEBUG = False
+ASSETS_DEBUG = True
 
 CACHE_DIR = os.path.join(basepath(), 'tmp', 'cache')
 CACHE_TYPE = 'filesystem'
 
 CELERY_ACCEPT_CONTENT = [ 'pickle', 'msgpack' ]
-CELERY_BROKER_URL = 'redis://172.17.42.1:6379'
+#CELERY_BROKER_URL = 'redis://172.17.42.1:6379'
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_IMPORTS = (
-        'pack.bcrypt',
-        'pack.ldap',
+        'piko.bcrypt',
+        'piko.ldap',
     )
 
-CELERY_RESULT_BACKEND = 'redis://172.17.42.1:6379'
+#CELERY_RESULT_BACKEND = 'redis://172.17.42.1:6379'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
 CELERY_RESULT_ENGINE_OPTIONS = {'echo': True}
 CELERY_TASK_SERIALIZER = 'msgpack'
 

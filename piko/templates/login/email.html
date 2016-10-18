@@ -1,0 +1,12 @@
+{% extends theme('includes/layout.html', true) %}
+{% from theme('includes/_formhelpers.html', true) import render_field %}
+{% block content %}
+<form method="post">
+    {{ form.hidden_tag() }}
+    <table>
+        {{ render_field(form.email_address) }}
+        {{ render_field(form.password) }}
+        {{ render_field(form.submit) }}
+    </table>
+</form>
+{% endblock content %}

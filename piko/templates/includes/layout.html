@@ -59,8 +59,11 @@
             <tr><td>{{ _("Country of origin:") }}</td><td>__GEOIP_COUNTRY__</td></tr>
             <tr><td>{{ _("Currency:") }}</td><td>__I18N_CURRENCY__</td></tr>
             <tr><td>{{ _("Language:") }}</td><td>__L10N_LANGUAGE__</td></tr>
-            <tr><td>Cached on:</td><td>{{ g.before_request }}</td></tr>
+            <tr><td>Cached on:</td><td>{{ now }}</td></tr>
         </table>
+
+        {% block footer %}
+        {% endblock footer %}
     </body>
 </html>
 

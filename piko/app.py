@@ -2,6 +2,7 @@
     Interestingly enough, Flask does not everything one wants Flask to do.
 """
 
+import datetime
 import os
 import time
 import uuid
@@ -21,6 +22,7 @@ from flask.ext.babel import Babel
 from flask.ext.babel import gettext
 from flask.ext.htmlmin import HTMLMIN
 from flask.ext.themes import setup_themes
+from flask.ext.socketio import disconnect
 
 from functools import wraps
 
@@ -48,6 +50,7 @@ class App(Flask):
 
         self.after_request(self.after_request_handler)
         self.before_request(self.before_request_handler)
+        self.teardown_request(self.teardown_request_handler)
 
         self.context_processor(self.context_processor_handler)
 
@@ -76,8 +79,8 @@ class App(Flask):
     def register_blueprint(self, *args, **kwargs):
         super(App, self).register_blueprint(*args, **kwargs)
 
-    def abort(code, message=None):
-        return abort(404)
+    def abort(self, code, message=None):
+        return abort(code, message)
 
     def after_request_handler(self, response):
         """
@@ -146,10 +149,16 @@ class App(Flask):
         return dict(_=_)
 
     def render_template(self, template, *args, **kwargs):
+        kwargs['now'] = datetime.datetime.utcnow()
         try:
             from .themes import render_template
         except ImportError:
             from flask import render_template
         finally:
             return render_template(template, *args, **kwargs)
+
+    def teardown_request_handler(self, exception):
+        db = getattr(g, 'db', None)
+        if db is not None:
+            db.session.close()
 

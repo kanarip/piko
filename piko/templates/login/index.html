@@ -1,0 +1,87 @@
+{% extends theme('includes/layout.html', true) %}
+
+{% block content %}
+    {% if g.user %}
+        <p>
+            Hello {{ g.user.name }}!
+        </p>
+    {% else %}
+        <h2>Pick Your Poison</h2>
+        <p>
+            {{ _("Sign yourself in using either of these, or register with a " +
+            "traditional email address and password combo:") }}
+        </p>
+        {% if config.get('TWITTER_API_KEY', False) %}
+            <p>
+                <a href="{{ url_for('piko.oauth.oauth_twitter_login', next=request.args.get('next', None)) }}">
+                    {# No image for twitter yet
+                    <img src="{{ url_for('static', filename='sign-in-with-twitter.png') }}" alt="TWITTER">
+                    #}
+                    TWITTER
+                </a>
+            </p>
+        {% endif %}
+        {% if config.get('FACEBOOK_APP_ID', False) %}
+            <p>
+                <a href="{{ url_for('piko.oauth.oauth_facebook_login', next=request.args.get('next', None)) }}">
+                    {# No image for facebook yet
+                    <img src="{{ url_for('static', filename='sign-in-with-facebook.png') }}" alt="FACEBOOK">
+                    #}
+                    FACEBOOK
+                </a>
+            </p>
+        {% endif %}
+        {% if config.get('GOOGLE_CLIENT_ID', False) %}
+            <p>
+                <a href="{{ url_for('piko.oauth.oauth_google_login', next=request.args.get('next', None)) }}">
+                    {# No image for google yet
+                    <img src="{{ url_for('static', filename='sign-in-with-google.png') }}" alt="GOOGLE">
+                    #}
+                    GOOGLE
+                </a>
+            </p>
+        {% endif %}
+        <p>
+            <a href="{{ url_for('piko.login_email', next=request.args.get('next', None)) }}">
+                {# No image for email yet
+                <img src="{{ url_for('static', filename='sign-in-with-email.png') }}" alt="EMAIL">
+                #}
+                EMAIL
+            </a>
+        </p>
+        <br clear="all" />
+        <hr width="50%" />
+
+        <h2>{{ _("How does this work?") }}</h2>
+        <p>
+            {{ _("You authenticate against either of the aforementioned third " +
+            "parties, and then configure your local account with preferences " +
+            "and Kolab Now accounts") }}
+        </p>
+        <p>
+            {{ _("The information we keep is limited to the following:") }}
+        </p>
+        <p>
+            <dl>
+                <dt>
+                    {{ _("The fact you did succesfully authenticate.") }}
+                </dt>
+                <dd>
+                    <small>{{ _("In your session.") }}</small>
+                </dd>
+                <dt>
+                    {{ _("The publicly visible name of your profile.") }}
+                </dt>
+                <dd>
+                    <small>{{ _("In our database.") }}</small>
+                </dd>
+                <dt>
+                    {{ _("The user ID of your remote account.") }}
+                </dt>
+                <dd>
+                    <small>{{ _("In our database.") }}</small>
+                </dd>
+            </dl>
+        </p>
+    {% endif %}
+{% endblock content %}

@@ -170,7 +170,7 @@ class Account(db.Model):
         """
             Verify the password.
         """
-        if transaction == None:
+        if transaction is None:
             result = check_password_hash(self.password_hash, password)
             db.session.add(AccountLogin(account_id=self.id, success=result))
             db.session.commit()
