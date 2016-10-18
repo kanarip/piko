@@ -11,7 +11,7 @@ def basepath():
                 )
         )
 
-#ASSETS_DEBUG = True
+#ASSETS_DEBUG = False
 
 CACHE_DIR = os.path.join(basepath(), 'tmp', 'cache')
 CACHE_TYPE = 'filesystem'
@@ -37,7 +37,7 @@ DEFAULT_THEME = 'default'
 
 LANGUAGES = ['en', 'nl']
 
-MINIFY_PAGE = True
+#MINIFY_PAGE = True
 
 SECRET_KEY = os.urandom(24)
 

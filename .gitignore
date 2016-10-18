@@ -4,4 +4,5 @@ docs/build/
 piko/static/assets/
 piko/static/.webassets-cache/
 tmp/
+tmp/cache/.gitkeep
 venv/
