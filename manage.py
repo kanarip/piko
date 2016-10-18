@@ -5,6 +5,7 @@ import sys
 sys.path.insert(0, '.')
 
 from flask.ext.assets import ManageAssets
+from flask.ext.cache import Cache
 from flask.ext.migrate import Migrate, MigrateCommand
 from flask.ext.script import Manager
 
@@ -50,11 +51,16 @@ for candidate in os.listdir(base_path):
         app.logger.error("%s" % (traceback.format_exc()))
 
 migrate = Migrate(app, db)
+cache = Cache(app, config = app.config)
 
 manager = Manager(app)
 
 manager.add_command('assets', ManageAssets)
 manager.add_command('db', MigrateCommand)
+
+@manager.command
+def clear_cache():
+    cache.clear()
 
 @manager.command
 def create_db():
