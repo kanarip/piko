@@ -1,3 +1,7 @@
+"""
+    Localization functions for |product_name|.
+"""
+
 from flask import g
 from flask import request
 from flask import session
@@ -7,9 +11,11 @@ from flask.ext.babel import get_locale as get_babel_locale
 from flask.ext.babel import get_timezone as get_babel_timezone
 from flask.ext.babel import gettext
 
-
 def register_l10n(app):
-
+    """
+        Register the localization functions with an
+        :py:class:`App <piko.app.App>`
+    """
     babel = Babel(app)
 
     from piko.cache import cache

@@ -9,6 +9,7 @@ from flask import request
 from flask import session
 from flask import url_for
 from flask.ext.oauthlib.client import OAuthException
+from flask.ext.oauthlib.provider import OAuth2Provider
 
 from piko.authn import current_session
 from piko.authn import login_sequence_account_get_or_create
@@ -38,7 +39,7 @@ template_path = os.path.abspath(
             )
     )
 
-def register(apps): 
+def register(apps):
     from piko import App
     app = App('piko.oauth', template_folder = template_path)
     app.debug = True
@@ -53,6 +54,8 @@ def register_blueprint(app):
     app.register_blueprint(blueprint)
 
 def register_routes(app):
+    oauth2 = OAuth2Provider(app)
+
     @app.route('/')
     def index():
         return app.abort(404)
@@ -232,4 +235,90 @@ def register_routes(app):
         flash(_("Login successful"), 'success')
 
         return login_sequence_account_get_or_create('twitter', resp['user_id'], resp['screen_name'])
+
+    @app.route('/authorize', methods=["GET", "POST"])
+    @oauth2.authorize_handler
+    def authorize(*args, **kwargs):
+        if request.method == "GET":
+            return app.render_template('authorize.html')
+
+        return True
+
+    @app.route('/token')
+    @oauth2.token_handler
+    def token():
+        return {}
+
+    @app.route('/revoke')
+    @oauth2.revoke_handler
+    def revoke():
+        pass
+
+    @oauth2.clientgetter
+    def get_client(client_id):
+        from piko.db import db
+        from piko.db.model import OAuth2Client
+
+        return db.session.query(OAuth2Client).filter_by(client_id=client_id).first()
+
+    @oauth2.grantgetter
+    def get_grant(client_id, code):
+        from piko.db import db
+        from piko.db.model import OAuth2Grant
+
+        return db.session.query(OAuthGrant).filter_by(client_id=client_id, code=code).first()
+
+    @oauth2.tokengetter
+    def get_token(access_token=None, refresh_token=None):
+        from piko.db import db
+        from piko.db.model import OAuth2Token
+
+        if access_token:
+            return db.session.query(OAuth2Token).filter_by(access_token=access_token).first()
+
+        if refresh_token:
+            return db.session.query(OAuth2Token).filter_by(refresh_token=refresh_token).first()
+
+        return None
+
+    @oauth2.grantsetter
+    def set_grant(client_id, code, request, *args, **kwargs):
+        from piko.db import db
+        from piko.db.model import OAuth2Grant
+
+        expires = datetime.utcnow() + timedelta(seconds=100)
+        grant = OAuth2Grant(
+                client_id=client_id,
+                code=code['code'],
+                redirect_uri=request.redirect_uri,
+                scope=' '.join(request.scopes),
+                user_id=g.user.id,
+                expires=expires,
+            )
+
+        db.session.add(grant)
+        db.session.commit()
+
+    @oauth2.tokensetter
+    def set_token(token, request, *args, **kwargs):
+        from piko.db import db
+        from piko.db.model import OAuth2Token
+
+        # In real project, a token is unique bound to user and client.
+        # Which means, you don't need to create a token every time.
+        tok = OAuth2Token(**token)
+        tok.user_id = request.user.id
+        tok.client_id = request.client.client_id
+
+        db.session.add(tok)
+        db.session.commit()
+
+    @oauth2.usergetter
+    def get_user(username, password, *args, **kwargs):
+        from piko.db import db
+        from piko.db.model import Account
+
+        # This is optional, if you don't need password credential
+        # there is no need to implement this method
+        return db.session.query(Account).filter_by(_name=username).first()
 

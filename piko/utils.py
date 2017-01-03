@@ -1,3 +1,5 @@
+import getpass
+
 import piko
 
 log = piko.getLogger('piko.utils')
@@ -14,7 +16,7 @@ def ask_question(question, default="", password=False, confirm=False):
 
         Usage: pykolab.utils.ask_question("What is the server?", default="localhost")
     """
-    
+
     if not default == "" and not default == None and conf.cli_keywords.answer_default:
         if not conf.cli_keywords.quiet:
             print ("%s [%s]: " % (question, default))

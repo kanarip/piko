@@ -12,16 +12,16 @@ from piko.db import db
 
 class TestCandlepin(unittest.TestCase):
     def test_000_customers(self):
-        for x in range(0,10):
+        for x in range(0,10000):
             customer = Customer(name="Customer #%06d" % (x))
             db.session.add(customer)
             #db.session.commit()
 
-            entitlement = Entitlement(customer_id=customer.id, product_id=1, quantity=10)
+            entitlement = Entitlement(customer_id=customer.id, product_id=1, quantity=100)
             db.session.add(entitlement)
             #db.session.commit()
 
-            for x in range(0,9):
+            for x in range(0,100):
                 system = System(customer=customer)
                 db.session.add(system)
                 #db.session.commit()

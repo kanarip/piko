@@ -130,9 +130,25 @@ def login_sequence_associate_account(id):
         otherwise valid account on the server.
     """
     from piko.db import db
+
     _session = current_session()
-    _session.account_id = id
-    db.session.commit()
+    _session.associate_account_id(id)
+
+def login_sequence_associate_person(id):
+    """
+        Associate an :py:attr:`piko.db.model.Account.id` with the
+        current :py:attr:`piko.db.model.Session`, without disclosing
+        the validity of the account to the visitor via, for example, a
+        cookie value.
+
+        This is used for staged account login processing -- we keep the
+        information about a user having attempted to login with an
+        otherwise valid account on the server.
+    """
+    from piko.db import db
+
+    _session = current_session()
+    _session.associate_person_id(id)
 
 def login_sequence_complete(success):
     """
@@ -155,7 +171,13 @@ def login_sequence_complete(success):
 
     _session = current_session()
 
-    if not _session.account_id or not len(_session.transactions) in range(1,3):
+    if len(_session.transactions) in range(1,3):
+        session.clear()
+        db.session.delete(_session)
+        db.session.commit()
+        return abort(500)
+
+    if _session.account_id is None and _session.person_id is None:
         session.clear()
         db.session.delete(_session)
         db.session.commit()

@@ -1,5 +1,7 @@
 import os
 
+from flask import jsonify
+
 from piko import App
 from piko.authn import login_required
 from piko.authz import role_required
@@ -18,6 +20,12 @@ def register(apps):
 
     apps['/candlepin'] = app
 
+    api_app = App('piko.api.v1.candlepin')
+    api_app.debug = True
+    register_api_routes(api_app)
+
+    apps['/api/v1/candlepin'] = api_app
+
     return apps
 
 def register_blueprint(app):
@@ -35,17 +43,37 @@ def register_blueprint(app):
 
     app.register_blueprint(blueprint)
 
+    blueprint = Blueprint(
+            app,
+            'piko.api.v1.candlepin',
+            __name__,
+            url_prefix='/api/v1/candlepin'
+        )
+
+    register_api_routes(blueprint)
+
+    app.register_blueprint(blueprint)
+
 def register_routes(app):
     @app.route('/')
     def index():
         return app.render_template('index.html')
 
-    @app.route('/register', methods = [ 'POST' ])
+    @app.route('/register')
+    @login_required
     def register():
         """
             A human being issues a command-line register.
+
+            Award a token that can be used precisely once, and allows the system to be registered.
         """
-        return "magic token"
+
+        auth_token = "asd"
+
+        return app.render_template(
+                'register.html',
+                auth_token = auth_token
+            )
 
     @app.route('/admin')
     def admin():
@@ -70,3 +98,15 @@ def register_routes(app):
             )
 
     role_required(admin, 'candlepin_admin')
+
+def register_api_routes(app):
+    @app.route('/system/register', methods=['HEAD'])
+    def system_register_head():
+        return jsonify({'help doc': "some help"})
+
+    @app.route('/system/register', methods=['POST'])
+    def system_register():
+        from piko.db import db
+        from piko.db.model import System
+
+        return jsonify({'result': True})

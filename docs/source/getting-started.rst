@@ -31,3 +31,30 @@ Getting Started
     .. parsed-literal::
 
         $ :command:`./standalone.py`
+
+To continue in development:
+
+#.  Create a system configuration file :file:`/etc/piko.conf`:
+
+    .. parsed-literal::
+
+        $ :command:`sudo ln -s $(pwd)/piko.conf /etc/piko.conf`
+
+#.  Create a user configuration file :file:`~/.pikorc`:
+
+    .. parsed-literal::
+
+        $ :command:`ln -s $(pwd)/pikorc.example ~/.pikorc`
+
+#.  Run a Redis server:
+
+    .. parsed-literal::
+
+        $ :command:`redis-server --port 6379 --daemonize no --loglevel debug`
+
+#.  Run a **celery** server:
+
+    .. parsed-literal::
+
+        $ :command:`celery -A piko.celery.celery worker`
+

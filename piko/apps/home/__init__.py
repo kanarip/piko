@@ -15,6 +15,7 @@ from piko import App
 from piko.authn import current_session
 from piko.authn import login_required
 from piko.authn import login_sequence_associate_account
+from piko.authn import login_sequence_associate_person
 from piko.authn import login_sequence_complete
 from piko.authn import login_sequence_continue
 from piko.authn import login_sequence_start
@@ -53,22 +54,29 @@ def register_blueprint(app):
 def register_routes(app):
     @app.route('/')
     def index():
+        """
+            Nothing much to see here.
+        """
         return app.render_template('index.html')
 
     @app.route('/login')
     def login():
+        """
+            Renders the login overview with links to enabled login
+            mechanisms.
+        """
         return app.render_template('login/index.html')
 
     @app.route('/login/complete')
     def login_complete():
         from piko.db import db
-        from piko.db.model import Account
+        from piko.db.model import Person
 
         _session = current_session()
-        account = db.session.query(Account).get(_session.account_id)
+        person = db.session.query(Person).get(_session.person_id)
 
-        if account is None:
-            return app.abort(500, "Invalid Account.")
+        if person is None:
+            return app.abort(500, "Invalid Person.")
 
         task_id = _session.transactions[0].task_id
 
@@ -81,7 +89,7 @@ def register_routes(app):
             return app.abort(403, "Access Denied")
 
         if task.info == True:
-            session['account_id'] = account.id
+            session['person_id'] = person.id
 
             if _session.redirect:
                 _redirect = redirect(_session.redirect)
@@ -103,7 +111,8 @@ def register_routes(app):
 
         _session = current_session()
 
-        if _session.account_id == session.get('account_id', False):
+        # Already logged in.
+        if _session.person_id == session.get('person_id', False):
             if _session.id == session.get('uuid'):
                 return redirect(url_for('piko.profile'))
 
@@ -126,39 +135,48 @@ def register_routes(app):
                 from piko.db import db
                 from piko.db.model import Account
 
-                account = db.session.query(Account).filter_by(_name=form.email_address.data, type_name='email').first()
+                account = db.session.query(
+                        Account
+                    ).filter_by(
+                            _name=form.email_address.data,
+                            type_name='email'
+                        ).first()
 
-                if account is not None:
-                    login_sequence_associate_account(account.id)
+                # No such account could be found.
+                if account is None:
+                    flash(_("Login failed."), 'danger')
+                    return login_sequence_complete(False)
 
-                    if len(account.second_factors) > 0:
-                        transaction, uuid = login_sequence_continue()
+                login_sequence_associate_account(account.id)
 
-                        result = account.verify_password(form.password.data, transaction=transaction)
+                # This account is not a personal account.
+                if account.person_id is None:
+                    flash(_("Login failed."), 'danger')
+                    return login_sequence_complete(False)
 
-                        return redirect(url_for('piko.login_otp'))
+                # Associate the account we've just attempted to login
+                # with.
+                #
+                # This does not set any validity.
+                login_sequence_associate_person(account.person_id)
 
-                    else:
-                        transaction, uuid = login_sequence_continue()
+                # Associate a translaction uuid with the current state
+                # of progress.
+                transaction, uuid = login_sequence_continue()
 
-                        result = account.verify_password(form.password.data, transaction=transaction)
+                result = account.person.verify_password(
+                        form.password.data,
+                        transaction=transaction
+                    )
 
-                        return redirect(url_for('piko.login_wait'))
+                if len(account.second_factors) > 0:
+                    return redirect(url_for('piko.login_otp'))
 
-                        if not result:
-                            flash(_("Login failed"), 'danger')
-
-                            return login_sequence_complete(False)
-
-                        else:
-                            flash(_("Login successful"), 'success')
-
-                            session['account_id'] = account.id
-
-                            return login_sequence_complete(True)
+                elif len(account.person.second_factors) > 0:
+                    return redirect(url_for('piko.login_otp'))
 
                 else:
-                    flash(_("Login failed"), 'danger')
+                    return redirect(url_for('piko.login_wait'))
 
             else:
                 flash(_("Login failed"), 'danger')
@@ -175,34 +193,44 @@ def register_routes(app):
         from piko.forms import LoginOTPForm
 
         from piko.db import db
-        from piko.db.model import Account
+        from piko.db.model import Person
 
         _session = current_session()
 
-        if _session.account_id == session.get('account_id', None):
+        if _session.person_id == session.get('person_id', None):
             if _session.id == session.get('uuid'):
                 return redirect(url_for('piko.index'))
 
-        form = LoginOTPForm(request.form, uuid = _session.transactions[1].transaction_id)
+        form = LoginOTPForm(
+                request.form,
+                uuid = _session.transactions[1].transaction_id
+            )
 
         if request.method == 'GET':
             return app.render_template('login/otp.html', form=form)
 
         elif request.method == "POST":
-            if not request.form.get('uuid') == _session.transactions[1].transaction_id:
+            assert len(_session.transactions) > 1
+
+            transaction_id = _session.transactions[1].transaction_id
+            uuid = request.form.get('uuid')
+
+            if not uuid == transaction_id:
                 app.logger.error("form's uuid is not session transaction id")
                 return app.abort(500, "Invalid transaction UUID")
 
             if form.validate():
-                account = db.session.query(Account).get(_session.account_id)
+                person = db.session.query(
+                        Person
+                    ).get(_session.person_id)
 
-                if account == None:
-                    app.logger.error("no account for _session.account_id: %r" % (_session.account_id))
+                if person == None:
+                    app.logger.error("no person for _session.person_id: %r" % (_session.person_id))
                     return app.abort(500)
                 else:
-                    app.logger.info("account ID %r" % (_session.account_id))
+                    app.logger.info("person ID %r" % (_session.person_id))
 
-                result = account.validate_token(form.otp.data)
+                result = person.validate_token(form.otp.data)
 
                 if result:
                     app.logger.info("token validated")
@@ -221,9 +249,9 @@ def register_routes(app):
                     task_id = _session.transactions[0].task_id
 
                     if not task_id:
-                        app.logger.info("setting session['account_id'] to %r" % (account.id))
+                        app.logger.info("setting session['person_id'] to %r" % (person.id))
 
-                        session['account_id'] = account.id
+                        session['person_id'] = person.id
                         app.logger.info("using session's redirect %r" % (_session.redirect))
                         _redirect = redirect(_session.redirect)
                         _session.redirect = None
@@ -237,7 +265,7 @@ def register_routes(app):
                     task.wait()
 
                     if task.info == True:
-                        session['account_id'] = account.id
+                        session['person_id'] = person.id
 
                         if _session.redirect:
                             _redirect = redirect(_session.redirect)
@@ -254,9 +282,9 @@ def register_routes(app):
                         return app.abort(500)
 
             else:
-                account = db.session.query(Account).get(_session.account_id)
+                person = db.session.query(Person).get(_session.person_id)
 
-                if account == None:
+                if person is None:
                     return app.abort(500)
 
                 login_sequence_complete(False)
@@ -306,16 +334,16 @@ def register_routes(app):
     @app.route('/login/wait')
     def login_wait():
         from piko.db import db
-        from piko.db.model import Account
+        from piko.db.model import Person
 
         _session = current_session()
-        account = db.session.query(Account).get(_session.account_id)
+        person = db.session.query(Person).get(_session.person_id)
 
-        if account == None:
-            app.logger.error("no account for _session.account_id: %r" % (_session.account_id))
+        if person is None:
+            app.logger.error("no person for _session.person_id: %r" % (_session.person_id))
             return app.abort(500)
         else:
-            app.logger.info("account ID %r" % (_session.account_id))
+            app.logger.info("person ID %r" % (_session.person_id))
 
         task_id = _session.transactions[0].task_id
 

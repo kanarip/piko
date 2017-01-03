@@ -176,7 +176,7 @@ def test():
             [
                     'celery',
                     '-A',
-                    'piko.app.celery',
+                    'piko.celery.celery',
                     'worker'
                 ]
         )

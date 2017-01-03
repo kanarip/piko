@@ -6,6 +6,8 @@
 from .account import Account
 from .accountlogin import AccountLogin
 from .change import Change
+from .group import Group
+from .person import Person
 from .product import Product
 from .product import ProductLocale
 from .role import Role
@@ -13,6 +15,7 @@ from .session import Session
 from .session_transaction import SessionTransaction
 
 from .account_roles_t import account_roles_t
+from .person_groups_t import person_groups_t
 
 from .kb.article import KBArticle
 from .kb.view import KBView
@@ -26,10 +29,12 @@ __all__ = [
         'Account',
         'AccountLogin',
         'Change',
+        'Group',
         'HOTPToken',
         'KBArticle',
         'KBView',
         'KBVote',
+        'Person',
         'Product',
         'Role',
         'Session',
@@ -37,4 +42,5 @@ __all__ = [
         'TANToken',
         'TOTPToken',
         'account_roles_t',
+        'person_groups_t'
     ]

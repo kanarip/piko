@@ -4,6 +4,7 @@ import commands
 
 import piko
 
+from piko import client
 from piko import utils
 from piko.translate import _
 
@@ -28,14 +29,26 @@ def execute(*args, **kw):
         Register with your favorite piko.
     """
 
-    print utils.multiline_message(
-            "Navigate to %s%s and obtain a token." % (
-                    conf.get('piko', 'server_uri').rstrip('/'),
-                    '/candlepin/register'
-                )
+    if conf.get('piko', 'auth_token') is None:
+        print utils.multiline_message(
+                "Navigate to %s%s and obtain a token." % (
+                        conf.get('piko', 'server_uri').rstrip('/'),
+                        '/candlepin/register'
+                    )
+            )
+
+        sys.stdout.flush()
+
+        token = utils.ask_question("Token", password=True)
+
+        conf.command_set('piko', 'auth_token', token)
+
+    result = client.request(
+            method = 'GET',
+            path = '/candlepin/system/register'
         )
 
-    sys.stdout.flush()
-
-    token = utils.ask_question("Token")
-
+    if result['result']:
+        print "OK"
+    else:
+        print "NO"

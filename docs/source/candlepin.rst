@@ -2,7 +2,13 @@
 Candlepin
 =========
 
-A user registers a customer entitity.
+Candlepin is an application for system and service entitlement management.
+
+A :py:class:`Person <piko.db.model.Person>` registers one or more
+:py:class:`Accounts <piko.db.model.Account>` -- using any of these accounts
+creates the :py:class:`Session <piko.db.model.Session>` user entity.
+
+A user registers a :py:class:`Customer <piko.db.model.Customer>` entitity.
 
 A customer obtains an entitlement. This entitlement is attached to a product, and provides a maximum quantity for such entitlement.
 

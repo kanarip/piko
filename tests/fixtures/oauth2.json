@@ -1,0 +1,34 @@
+[
+        {
+                "table": "oauth2_client",
+                "records": [
+                        {
+                                "id": "kontact",
+                                "name": "kontact",
+                                "description": "We've made kontact!",
+                                "secret": "secret-for-kontact",
+                                "confidential": true,
+                                "_redirect_uris": "http://127.0.0.1:5000/oauth2/token",
+                                "_default_scopes": "email calendar tasks notes"
+                            },
+                        {
+                                "id": "gnome",
+                                "name": "GNOME",
+                                "description": "Your garden-variety desktop environment",
+                                "secret": "secret-for-gnome",
+                                "confidential": true,
+                                "_redirect_uris": "http://127.0.0.1:5000/oauth2/token",
+                                "_default_scopes": "email calendar tasks notes"
+                            },
+                        {
+                                "id": "piko-candlepin",
+                                "name": "piko",
+                                "description": "You may have entitled your system!",
+                                "secret": "secret-for-piko-candlepin",
+                                "confidential": true,
+                                "_redirect_uris": "http://127.0.0.1:5000/oauth2/token",
+                                "_default_scopes": "entitlements subscriptions"
+                            }
+                    ]
+            }
+    ]

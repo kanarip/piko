@@ -1,7 +1,9 @@
 """
-    Nothing to see here.
+    ========
+    ``piko``
+    ========
 
-    .. automodule:: piko.app
+    The piko module.
 """
 import logging
 import threading

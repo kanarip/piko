@@ -15,7 +15,6 @@ development = os.path.isdir(
 if development:
     sys.path.insert(0, '.')
 
-from piko.translate import _
 from piko.cli import Cli
 
 def main():

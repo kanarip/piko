@@ -6,9 +6,6 @@ import uuid
 
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from piko.bcrypt import check_password_hash
-from piko.bcrypt import generate_password_hash
-
 from piko.db import db
 
 from .accountlogin import AccountLogin
@@ -24,14 +21,12 @@ class Account(db.Model):
     """
     __tablename__ = "account"
 
+    #: A generated unique integer ID.
     id = db.Column(db.Integer, primary_key=True)
-    """
-        The account ID.
-    """
 
     #: The account name. Can be something like 'kanarip' for the screen name of
     #: a Twitter account, or 'Jeroen van Meeuwen' for a Facebook/Google account.
-    _name = db.Column(db.String(256), nullable=False, index=True)
+    _name = db.Column(db.String(255), nullable=False, index=True)
 
     #: The type of account registration we've gone through.
     type_name = db.Column(db.String(64), nullable=False)
@@ -39,6 +34,18 @@ class Account(db.Model):
     #: A remote ID, ensuring remote account renames do not fiddle with this
     #: database.
     remote_id = db.Column(db.String(64), default=-1, nullable=False)
+
+    #: The human being, if any, that this account belongs to. Links to :py:attr:`piko.db.model.Person.id`
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=True)
+
+    #: The digital person record this account belongs to.
+    person = db.relationship('Person')
+
+    #: The group, if any, that this account belongs to.
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id', ondelete='CASCADE'), nullable=True)
+
+    #: The digital :py:class:`piko.db.model.Group` record this account belongs to.
+    group = db.relationship('Group')
 
     #: The creation date of this account.
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -57,22 +64,12 @@ class Account(db.Model):
     #: Lock status
     locked = db.Column(db.Boolean, default=False)
 
-    #: This should be considered a token as well, but is most commonly recognized
-    #: as the first token.
-    password_hash = db.Column(db.String(128))
-
     roles = db.relationship(
             'Role',
             secondary="account_roles",
             backref="accounts",
             cascade="delete"
         )
-
-    #: Fast preference setting.
-    locale = db.Column(db.String(64), default='en')
-
-    #: Fast preference setting.
-    timezone = db.Column(db.String(64), default='UTC')
 
     def __init__(self, *args, **kwargs):
         super(Account, self).__init__(*args, **kwargs)
@@ -146,41 +143,6 @@ class Account(db.Model):
         self.modified = datetime.datetime.utcnow()
 
         self._name = value
-
-    @property
-    def password(self):
-        raise AttributeError("password cannot be read")
-
-    @password.setter
-    def password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-        change = Change(
-                self.__class__.__name__,
-                self.id,
-                '****',
-                '****'
-            )
-
-        db.session.add(change)
-
-        self.modified = datetime.datetime.utcnow()
-
-    def verify_password(self, password, transaction=None):
-        """
-            Verify the password.
-        """
-        if transaction is None:
-            result = check_password_hash(self.password_hash, password)
-            db.session.add(AccountLogin(account_id=self.id, success=result))
-            db.session.commit()
-            return result
-
-        else:
-            task = check_password_hash.delay(self.password_hash, password)
-            transaction.task_id = task.id
-            db.session.commit()
-            return task.id
 
     def validate_token(self, token):
         """

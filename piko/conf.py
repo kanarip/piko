@@ -52,11 +52,19 @@ class Conf(object):
         ##
         runtime_group = OptionGroup(self.cli_parser, _("Runtime Options"))
         runtime_group.add_option(
+                "--user-config",
+                dest    = "user_config_file",
+                action  = "store",
+                default = os.path.expanduser("~/.pikorc"),
+                help    = _("User configuration file to use")
+            )
+
+        runtime_group.add_option(
                 "-c", "--config",
                 dest    = "config_file",
                 action  = "store",
-                default = os.path.expanduser("~/.pikorc"),
-                help    = _("Configuration file to use")
+                default = '/etc/piko.conf',
+                help    = _("System configuration file to use")
             )
 
         runtime_group.add_option(
@@ -233,8 +241,11 @@ class Conf(object):
             if hasattr(self, 'cli_keywords') and not self.cli_keywords == None:
                 value = self.cli_keywords.config_file
 
+        if hasattr(self, 'cli_keywords') and not self.cli_keywords == None:
+            user_config_file = self.cli_keywords.user_config_file
+
         self.cfg_parser = SafeConfigParser()
-        self.cfg_parser.read(value)
+        self.cfg_parser.read([ value, user_config_file ])
 
         if hasattr(self, 'cli_keywords') and hasattr(self.cli_keywords, 'config_file'):
             self.cli_keywords.config_file = value

@@ -1,5 +1,62 @@
 [
         {
+                "table": "group",
+                "records": [
+                        {
+                                "id": 1,
+                                "_name": "Example, Inc."
+                            },
+                        {
+                                "id": 2,
+                                "_name": "Doe Family"
+                            }
+                    ]
+            },
+        {
+                "table": "person",
+                "records": [
+                        {
+                                "id": 1,
+                                "_name": "John Doe",
+                                "password_hash": "simple at 18 rounds",
+                                "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
+                            },
+                        {
+                                "id": 2,
+                                "_name": "Jane Doe",
+                                "password_hash": "simple at 18 rounds",
+                                "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
+                            },
+                        {
+                                "id": 3,
+                                "_name": "Joe Sixpack",
+                                "password_hash": "simple at 18 rounds",
+                                "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
+                            }
+                    ]
+            },
+        {
+                "table": "person_groups",
+                "records": [
+                        {
+                                "person_id": 1,
+                                "group_id": 1
+                            },
+                        {
+                                "person_id": 1,
+                                "group_id": 2
+                            },
+                        {
+                                "person_id": 2,
+                                "group_id": 2
+                            },
+                        {
+                                "person_id": 3,
+                                "group_id": 1
+                            }
+                    ]
+            },
+        {
                 "table": "account",
                 "records": [
                         {
@@ -7,7 +64,25 @@
                                 "_name": "john.doe@example.org",
                                 "type_name": "email",
                                 "password_hash": "simple at 18 rounds",
-                                "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
+                                "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m",
+                                "person_id": 1
+                            },
+                        {
+                                "id": 2,
+                                "_name": "john.doe@example.com",
+                                "type_name": "email",
+                                "password_hash": "simple at 18 rounds",
+                                "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m",
+                                "person_id": 1,
+                                "group_id": 1
+                            },
+                        {
+                                "id": 3,
+                                "_name": "@exampleinc",
+                                "type_name": "twitter",
+                                "remote_id": 100,
+                                "person_id": null,
+                                "group_id": 1
                             }
                     ]
             }

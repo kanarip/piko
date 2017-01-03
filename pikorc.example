@@ -1,0 +1,5 @@
+[piko]
+server_uri = http://127.0.0.1:5000/
+username = john.doe@example.org
+auth_token = asd
+

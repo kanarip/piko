@@ -43,8 +43,8 @@ LANGUAGES = ['en', 'nl']
 
 SECRET_KEY = os.urandom(24)
 
+SQLALCHEMY_DATABASE_URI = 'mysql://piko:piko@127.0.0.1/piko'
 #SQLALCHEMY_DATABASE_URI = 'sqlite:///%s/piko.db' % (os.path.join(basepath(), 'tmp'))
-SQLALCHEMY_DATABASE_URI = 'mysql://piko:piko@127.0.0.1/piko_dev'
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 SQLALCHEMY_ECHO = True
 

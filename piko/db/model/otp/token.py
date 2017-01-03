@@ -27,6 +27,15 @@ class OTPToken(object):
     def account(cls):
         return db.relationship('Account', backref=cls.__name__.lower())
 
+    #: The associated person id
+    @declared_attr
+    def person_id(cls):
+        return db.Column(db.Integer, db.ForeignKey('person.id', ondelete="CASCADE"))
+
+    @declared_attr
+    def person(cls):
+        return db.relationship('Person', backref=cls.__name__.lower())
+
     @declared_attr
     def confirmed(cls):
         return db.Column(db.Boolean, default=False)

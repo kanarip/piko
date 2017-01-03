@@ -6,6 +6,7 @@ piko -- for the smaller things
     :maxdepth: 2
 
     getting-started
+    architecture-and-design
 
 Indices and tables
 ==================

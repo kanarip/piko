@@ -20,6 +20,8 @@ else:
 if hasattr(result, 'scheme') and result.scheme == 'https':
     API_SSL = True
     API_PORT = 443
+else:
+    API_SSL = False
 
 if hasattr(result, 'hostname'):
     API_HOSTNAME = result.hostname
@@ -28,7 +30,7 @@ if hasattr(result, 'port'):
     API_PORT = result.port
 
 if hasattr(result, 'path'):
-    API_BASE = '%s/v1' % (result.path)
+    API_BASE = '%s/api/v1' % (result.path.rstrip('/'))
 
 conn = None
 
