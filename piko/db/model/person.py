@@ -64,7 +64,11 @@ class Person(db.Model):
         """
         from .account import Account
 
-        return db.session.query(Account).filter(Account.group_id.in__([x.id for x in self.groups])).all()
+        groups = []
+        for group in self.groups:
+            groups.append(group)
+
+        return groups
 
     @property
     def password(self):

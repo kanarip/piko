@@ -20,4 +20,4 @@ class TestPerson(unittest.TestCase):
         assert len(person.groups)
 
         # John's employer has a twitter account
-        assert len(person.group_accounts)
+        assert len(person.group_accounts) == 2
