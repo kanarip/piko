@@ -3,6 +3,7 @@ import json
 import os
 
 from flask import flash
+from flask import jsonify
 from flask import redirect
 from flask import _request_ctx_stack
 from flask import request
@@ -35,6 +36,14 @@ template_path = os.path.abspath(
     )
 
 def register(apps):
+    """
+        Register home as a Flask application.
+
+        :param apps:    A list of :py:class:`piko.App` applications.
+        :type  apps:    list
+        :returns:       A list of :py:class:`piko.App` applications with this
+                        application included.
+    """
     app = App('piko', template_folder = template_path)
     app.debug = True
     register_routes(app)
@@ -44,6 +53,9 @@ def register(apps):
     return apps
 
 def register_blueprint(app):
+    """
+        Register home as a Flask blueprint.
+    """
     from piko import Blueprint
     blueprint = Blueprint(app, 'piko', __name__)
 
@@ -51,13 +63,35 @@ def register_blueprint(app):
 
     app.register_blueprint(blueprint)
 
+    blueprint = Blueprint(
+            app,
+            'piko.api.v1',
+            __name__,
+            url_prefix='/api/v1'
+        )
+
+    register_api_routes(blueprint)
+
+    app.register_blueprint(blueprint)
+
 def register_routes(app):
+    """
+        Register routes with the main Flask application.
+    """
     @app.route('/')
     def index():
         """
             Nothing much to see here.
         """
-        return app.render_template('index.html')
+        from piko.db import db
+        from piko.db.model import Product
+
+        products = db.session.query(Product).options(db.joinedload(Product.translations[get_babel_locale()])).filter_by(signup_enabled=True).all()
+
+        return app.render_template(
+                'index.html',
+                products = products
+            )
 
     @app.route('/login')
     def login():
@@ -358,4 +392,25 @@ def register_routes(app):
     @app.route('/profile')
     def profile():
         return app.render_template('index.html')
+
+def register_api_routes(app):
+    @app.route('/whoami', methods = [ 'POST' ])
+    def whoami():
+        return jsonify({'result': True, 'username': 'john.doe@example.org'})
+
+    @app.route('/account-info', methods = [ 'POST' ])
+    def account_info():
+        from piko.db import db
+        from piko.db.model import Account
+
+        data = json.loads(request.data)
+        account = db.session.query(Account).filter_by(_name=data["username"]).first()
+        if account is None:
+            return app.abort(404)
+
+        person = None
+        if account.person is not None:
+            person = account.person.to_dict()
+
+        return jsonify({'result': True, 'account': account.to_dict(), 'person': person})
 
