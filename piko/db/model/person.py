@@ -113,6 +113,7 @@ class Person(db.Model):
         """
         if transaction is None:
             result = check_password_hash(self.password_hash, password)
+            from .accountlogin import AccountLogin
             db.session.add(AccountLogin(account_id=self.id, success=result))
             db.session.commit()
             return result
@@ -131,4 +132,21 @@ class Person(db.Model):
         from .account import Account
 
         return db.session.query(Account).filter_by(person_id=self.id)
+
+    def to_dict(self):
+        groups = self.groups
+
+        group_accounts = []
+
+        for group in groups:
+            if len(group.accounts) > 1:
+                for account in group.accounts:
+                    group_accounts.append(account._name)
+
+        return {
+                'locale': self.locale,
+                'groups': [x.name for x in self.groups],
+                'accounts': [x._name for x in self.accounts],
+                'group_accounts': group_accounts
+            }
 
