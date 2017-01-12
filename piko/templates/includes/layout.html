@@ -54,13 +54,17 @@
 
         <br clear="all">
         <hr>
+        {% if g.environment == "development" and g.debug == True %}
         <table>
             <tr><td>{{ _("Time to execute:") }}</td><td>__EXECUTION_TIME__</td></tr>
             <tr><td>{{ _("Country of origin:") }}</td><td>__GEOIP_COUNTRY__</td></tr>
             <tr><td>{{ _("Currency:") }}</td><td>__I18N_CURRENCY__</td></tr>
+            <tr><td>{{ _("1 CHF:") }}</td><td>__I18N_USDRATE__ USD</td></tr>
+            <tr><td>{{ _("1 CHF:") }}</td><td>__I18N_CHFRATE__ {{ currency }}</td></tr>
             <tr><td>{{ _("Language:") }}</td><td>__L10N_LANGUAGE__</td></tr>
             <tr><td>Cached on:</td><td>{{ now }}</td></tr>
         </table>
+        {% endif %}
 
         {% block footer %}
         {% endblock footer %}
