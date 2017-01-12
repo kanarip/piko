@@ -1,4 +1,35 @@
 {% extends theme('includes/layout.html') %}
 {% block content %}
-{{ _('Hello world') }}
+{% if products|length % 2 == 0 %}
+{% set columns = 2 %}
+{% endif %}
+{% if products|length % 3 == 0 %}
+{% set columns = 3 %}
+{% endif %}
+<table border="1">
+{% for product in products %}
+{% if loop.index == 1 %}
+<!-- first product //-->
+<tr>
+{% elif (loop.index - 1) is divisibleby(columns) %}
+<!-- 4th product //-->
+<tr>
+{% endif %}
+<td width="{{ 100 / columns }}%">
+<table>
+<tr><th>{{ product.name}}</th></tr>
+<tr><td>{{ product.description|safe }}</td></tr>
+<tr><td>{{ product.highlights|safe or '' }}</td></tr>
+<tr><td>{{ '%0.2f'|format(product.bestprice|float * exchange_rate) }} {{ currency }}</td></tr>
+</table>
+</td>
+{% if loop.index is divisibleby(columns) %}
+<!-- {{ loop.index }} divisible by {{ columns }} //-->
+</tr>
+{% elif loop.index == products|length %}
+<!-- last product //-->
+</tr>
+{% endif %}
+{% endfor %}
+</table>
 {% endblock content %}
