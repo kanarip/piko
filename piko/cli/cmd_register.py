@@ -29,6 +29,14 @@ def execute(*args, **kw):
         Register with your favorite piko.
     """
 
+    # TODO: Require to run as root
+
+    # TODO: Who are we?
+
+    # TODO: Are we any one of a set of valid customers?
+
+    # TODO: Generate this system's uuid
+
     if conf.get('piko', 'auth_token') is None:
         print utils.multiline_message(
                 "Navigate to %s%s and obtain a token." % (

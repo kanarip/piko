@@ -92,7 +92,7 @@ def request(method='GET', path='/', get=None, post=None):
     try:
         data = json.loads(data)
     except ValueError, errmsg:
-        return False
+        return {'result': False}
 
     log.debug(
             "RESPONSE: %s %s\r\n%s" % (

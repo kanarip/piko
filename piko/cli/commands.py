@@ -119,16 +119,20 @@ def execute(cmd_name, *args, **kw):
         try:
             exec("from %s.cmd_%s import cli_options as %s_%s_cli_options" % (group,command_name,group,command_name))
             exec("%s_%s_cli_options()" % (group,command_name))
-        except ImportError, e:
-            pass
+        except ImportError, errmsg:
+            import traceback
+            log.error((traceback.format_exc()))
 
     else:
         command_name = commands[cmd_name]['cmd_name']
-        try:
-            exec("from cmd_%s import cli_options as %s_cli_options" % (command_name,command_name))
-            exec("%s_cli_options()" % (command_name))
-        except ImportError, errmsg:
-            pass
+
+        if not command_name == 'help':
+            try:
+                exec("from cmd_%s import cli_options as %s_cli_options" % (command_name,command_name))
+                exec("%s_cli_options()" % (command_name))
+            except ImportError, errmsg:
+                import traceback
+                log.error((traceback.format_exc()))
 
     conf.parse_args()
 
