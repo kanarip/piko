@@ -9,21 +9,35 @@ class Customer(db.Model):
     """
     __tablename__ = 'candlepin_customer'
 
+    #: The unique ID for the customer. Note that this ID cannot be predictable,
+    #: and is generated.
     id = db.Column(db.Integer, primary_key=True)
 
+    #: A name for the customer. Think along the lines of *Example, Inc.*.
     name = db.Column(db.String(128))
 
-    #: Created
-    created = db.Column(db.DateTime, default=datetime.now)
+    #: The date and time this customer was created -- GMT.
+    created = db.Column(db.DateTime, default=datetime.utcnow)
 
-    #: Modified
-    modified = db.Column(db.DateTime, default=datetime.now)
+    modified = db.Column(db.DateTime, default=datetime.utcnow)
+    """
+        The date and time this customer was modified -- GMT.
+
+        .. NOTE::
+
+            It should probably be linked with a 'whodunnit', and it should
+            also be updated (automatically).
+    """
 
     entitlements = db.relationship('Entitlement')
 
     systems = db.relationship('System')
 
     def __init__(self, *args, **kwargs):
+        """
+            Upon creation of the customer entity, ensure that the integer ID
+            assigned to it is random as well as unique without trial and error.
+        """
         super(Customer, self).__init__(*args, **kwargs)
 
         _id = (int)(uuid4().int / 2**97)

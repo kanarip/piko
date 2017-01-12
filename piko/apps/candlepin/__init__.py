@@ -14,6 +14,9 @@ template_path = os.path.abspath(
     )
 
 def register(apps):
+    """
+        Register candlepin as a Flask application.
+    """
     app = App('piko.candlepin', template_folder = template_path)
     app.debug = True
     register_routes(app)
@@ -29,6 +32,9 @@ def register(apps):
     return apps
 
 def register_blueprint(app):
+    """
+        Register candlepin as a Flask blueprint.
+    """
     from piko import Blueprint
 
     blueprint = Blueprint(
@@ -55,6 +61,9 @@ def register_blueprint(app):
     app.register_blueprint(blueprint)
 
 def register_routes(app):
+    """
+        Register the routes with the main Flask application.
+    """
     @app.route('/')
     def index():
         return app.render_template('index.html')
@@ -65,9 +74,11 @@ def register_routes(app):
         """
             A human being issues a command-line register.
 
-            Award a token that can be used precisely once, and allows the system to be registered.
+            Award a token that can be used precisely once, and allows the
+            system to be registered.
         """
 
+        # TODO: Obviously needs to be generated.
         auth_token = "asd"
 
         return app.render_template(
@@ -100,6 +111,9 @@ def register_routes(app):
     role_required(admin, 'candlepin_admin')
 
 def register_api_routes(app):
+    """
+        Register the routes with the main Flask application.
+    """
     @app.route('/system/register', methods=['HEAD'])
     def system_register_head():
         return jsonify({'help doc': "some help"})
@@ -107,6 +121,6 @@ def register_api_routes(app):
     @app.route('/system/register', methods=['POST'])
     def system_register():
         from piko.db import db
-        from piko.db.model import System
+        from .db.model import System
 
         return jsonify({'result': True})

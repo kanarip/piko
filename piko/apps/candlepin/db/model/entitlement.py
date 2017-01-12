@@ -1,6 +1,21 @@
+import calendar
 from datetime import datetime
+from datetime import timedelta
 from uuid import uuid4
 from piko.db import db
+
+def in_two_months():
+    now = datetime.utcnow()
+    cur_year = (int)(datetime.utcnow().strftime('%Y'))
+    cur_month = (int)(datetime.utcnow().strftime('%m'))
+    days_this_month = calendar.monthrange(cur_year, cur_month)[1]
+    days_next_month = calendar.monthrange(cur_year, cur_month+1)[1]
+
+    total_days = days_this_month + days_next_month
+
+    delta = timedelta(days=total_days)
+
+    return now + delta
 
 class Entitlement(db.Model):
     """
@@ -30,12 +45,16 @@ class Entitlement(db.Model):
     quantity = db.Column(db.Integer, default=-1)
 
     #: The start date of the entitlement
-    start_date = db.Column(db.DateTime, default=datetime.now, nullable = False)
+    start_date = db.Column(
+            db.DateTime,
+            default = datetime.utcnow,
+            nullable = False
+        )
 
     #: Validity ends this many days after the start date
     end_date = db.Column(
-            db.Integer,
-            default = 365,
+            db.DateTime,
+            default = in_two_months,
             nullable = False
         )
 
