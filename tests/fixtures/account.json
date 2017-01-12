@@ -18,8 +18,21 @@
                         {
                                 "id": 1,
                                 "_name": "John Doe",
-                                "password_hash": "simple at 18 rounds",
-                                "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
+                                // simple at 12-18 rounds
+                                // 12:
+                                "password_hash": "$2b$12$FY4kfAVnjRaqVUDr7yuNAOxwnyT2IgCfPyEMht.IlGLVET4ReVOTO"
+                                // 13:
+                                //"password_hash": "$2b$13$GQABJSwpJJo9zWEEbmixOe4iuyeDYDx7ysHSQ57QHJMfbFyuE5UGm"
+                                // 14:
+                                //"password_hash": "$2b$14$0IAtxjo8qP7utvBkh7JXBOXUrtXn726t7xMwZSwx.IHm0RwzVNTbC"
+                                // 15:
+                                //"password_hash": "$2b$15$df0ZAz2GnHHD8DOIxu.hwOvJWEhAn6LChSaNtolD7IRaBMtjy1/DO"
+                                // 16:
+                                //"password_hash": "$2b$16$IZwIoenwfS674cERXH8cW.Qjnl5XuAm77IBjvNpFqIjc1JZyW1WS."
+                                // 17:
+                                //"password_hash": "$2b$17$g52JtM8FN3kp51582MZ6NOK/gKBJQYfR2cLldpTaCuZbCqpsCxPKe"
+                                // 18:
+                                //"password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
                             },
                         {
                                 "id": 2,
@@ -63,15 +76,15 @@
                                 "id": 1,
                                 "_name": "john@doefamily.org",
                                 "type_name": "email",
-                                "remote_id": null,
+                                "remote_id": -1,
                                 "person_id": 1,
-                                "group_id": null
+                                "group_id": 2
                             },
                         {
                                 "id": 2,
                                 "_name": "john.doe@example.com",
                                 "type_name": "email",
-                                "remote_id": null,
+                                "remote_id": -1,
                                 "person_id": 1,
                                 "group_id": 1
                             },
@@ -90,6 +103,14 @@
                                 "remote_id": 101,
                                 "person_id": null,
                                 "group_id": 1
+                            },
+                        {
+                                "id": 5,
+                                "_name": "jane@doefamily.org",
+                                "type_name": "email",
+                                "remote_id": -1,
+                                "person_id": 1,
+                                "group_id": 2
                             }
                     ]
             }

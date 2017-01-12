@@ -1,0 +1,97 @@
+[
+        {
+                "table": "product",
+                "records": [
+                        {
+                                "id": 1,
+                                "key": "on-premise",
+                                "bestprice": 0.10,
+                                "signup_enabled": true
+                            },
+                        {
+                                "id": 2,
+                                "key": "no-friends",
+                                "bestprice": 4.55,
+                                "signup_enabled": true
+                            },
+                        {
+                                "id": 3,
+                                "key": "party",
+                                "bestprice": 5.38,
+                                "signup_enabled": true
+                            },
+                        {
+                                "id": 4,
+                                "key": "colocated",
+                                "bestprice": 10.00,
+                                "signup_enabled": true
+                            },
+                        {
+                                "id": 5,
+                                "key": "some",
+                                "bestprice": 10.00,
+                                "signup_enabled": true
+                            },
+                        {
+                                "id": 6,
+                                "key": "other",
+                                "bestprice": 10.00,
+                                "signup_enabled": true
+                            }
+
+                    ]
+            },
+        {
+                "table": "product_i18n",
+                "records": [
+                        {
+                                "id": 1,
+                                "locale": "en",
+                                "name": "Support Subscription",
+                                "description": "<p class='description'>A long-term support subscription for on-premise installations.</p>"
+                            },
+                        {
+                                "id": 2,
+                                "locale": "en",
+                                "name": "No Friends",
+                                "description": "<ul class='description'><li>Personal account with email, calendaring and much more</li><li>Kolab Anywhere access with mobile device sync</li><li>Share folders and data with others on Kolab Now *</li><li>Hosted and managed entirely within Switzerland</li><li>A suitable replacement for Gmail, Outlook.com, iCloud and services alike</li></ul>"
+                            },
+                        {
+                                "id": 2,
+                                "locale": "nl",
+                                "name": "Geen Vrienden",
+                                "description": "<ul class='description'><li>Persoonlijk account met email, kalender en meer</li><li>Overal toegang tot Kolab met uw mobiel</li><li>Deel mappen met anderen</li><li>Compleet binnen Zwitserland hosted en beheerd</li><li>Een geschikte vervaning voor Gmail, Outlook.com, iCloud en andere soortgelijke services</li></ul>"
+                            },
+                        {
+                                "id": 3,
+                                "locale": "en",
+                                "name": "Party",
+                                "description": "<p class='description'>All the features of the Individual Account, <strong>plus</strong>:</p><ul class='description'><li>Use a domain name which you own</li><li>Manage any number of users with accounts @&lt;yourdomain&gt;</li></ul><p class='description'>Final pricing is based on the number of accounts created. You must already own the domain name you wish to use.</p>"
+                            },
+                        {
+                                "id": 3,
+                                "locale": "nl",
+                                "name": "Feestje",
+                                "description": "<p class='description'>Alle features van een individueel account, <strong>en als extras</strong>:</p><ul class='description'><li>Gebruik een eigen domain naam</li><li>Beheer een willekeurig aantal gebruikeraccounts @&lt;uwdomein&gt;</li></ul><p class='description'>Uiteindelijke prijs wordt gebaseerd op het aantal gebruikeraccounts. U dient het domein reeds te bezitten.</p>"
+                            },
+                        {
+                                "id": 4,
+                                "locale": "en",
+                                "name": "Colocated",
+                                "description": "<p class='description'>The benefits of an on-premise, supported Kolab installation, combined with the features of a hosted and managed deployment, garnished with many additional features.</p>"
+                            },
+                        {
+                                "id": 5,
+                                "locale": "en",
+                                "name": "Filler",
+                                "description": "<p class='description'>The benefits of an on-premise, supported Kolab installation, combined with the features of a hosted and managed deployment, garnished with many additional features.</p>"
+                            },
+                        {
+                                "id": 6,
+                                "locale": "en",
+                                "name": "Other Filler",
+                                "description": "<p class='description'>The benefits of an on-premise, supported Kolab installation, combined with the features of a hosted and managed deployment, garnished with many additional features.</p>"
+                            }
+                    ]
+            }
+    ]
