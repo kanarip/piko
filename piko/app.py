@@ -87,8 +87,17 @@ class App(Flask):
             Executed after a request has been handled, but the response
             has not yet been sent out.
         """
+        response.headers['Server'] = 'Joking/Surely 4.20'
+
+        if self.config.get('ENVIRONMENT', 'production') == 'production':
+            return response
+
+        if not self.config.get('DEBUG', False):
+            return response
+
         from piko.i18n import country_by_ipaddr
         from piko.i18n import currency_by_ipaddr
+        from piko.i18n import exchange_rate
 
         g.after_request = time.time()
 
@@ -96,16 +105,29 @@ class App(Flask):
 
         country = country_by_ipaddr(request.remote_addr)
         currency = currency_by_ipaddr(request.remote_addr)
-        locale = getattr(g, 'locale', None)
+        currency_usd_exchange_rate = exchange_rate('USD')
+        currency_chf_exchange_rate = exchange_rate(currency)
+        locale = getattr(g, 'locale', 'en')
+
+        response.direct_passthrough = False
 
         try:
-            if (response.response):
-                response.response[0] = response.response[0].replace('__EXECUTION_TIME__', str(diff))
-                response.response[0] = response.response[0].replace('__GEOIP_COUNTRY__', country)
-                response.response[0] = response.response[0].replace('__I18N_CURRENCY__', currency)
-                response.response[0] = response.response[0].replace('__L10N_LANGUAGE__', locale)
-        except:
-            pass
+
+            _data = response.get_data(as_text=True)
+
+            _data = _data.replace('__EXECUTION_TIME__', str(diff))
+            _data = _data.replace('__GEOIP_COUNTRY__', country)
+            _data = _data.replace('__I18N_CURRENCY__', currency)
+            _data = _data.replace('__I18N_USDRATE__', str(currency_usd_exchange_rate))
+            _data = _data.replace('__I18N_CHFRATE__', str(currency_chf_exchange_rate))
+            _data = _data.replace('__L10N_LANGUAGE__', locale)
+
+            response.set_data(_data)
+
+        except Exception, errmsg:
+            import traceback
+            print("Exception: %s" % (errmsg))
+            print("%s" % (traceback.format_exc()))
 
         return response
 
@@ -114,6 +136,9 @@ class App(Flask):
             Executed before a request is handled.
         """
         g.before_request = time.time()
+
+        g.environment = self.config.get('ENVIRONMENT', 'production')
+        g.debug = self.config.get('DEBUG', False)
 
         if not 'uuid' in session:
             session['uuid'] = uuid.uuid4().hex
@@ -158,7 +183,5 @@ class App(Flask):
             return render_template(template, *args, **kwargs)
 
     def teardown_request_handler(self, exception):
-        db = getattr(g, 'db', None)
-        if db is not None:
-            db.session.close()
-
+        from piko.db import db
+        db.session.close()
