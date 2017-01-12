@@ -16,6 +16,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import os
 import sys
 
@@ -72,7 +73,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'piko'
-copyright = u'2016, Jeroen van Meeuwen'
+copyright = u'2016-%s, Jeroen van Meeuwen' % (datetime.datetime.strftime(datetime.datetime.utcnow(),'%Y'))
 author = u'Jeroen van Meeuwen'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -142,7 +143,7 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -362,7 +363,7 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+#intersphinx_mapping = {'https://docs.python.org/': None}
 
 rst_prolog = """
 .. |product_name| replace:: piko
