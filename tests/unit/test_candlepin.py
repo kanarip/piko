@@ -16,9 +16,12 @@ from piko.db import db
 
 class TestCandlepin(unittest.TestCase):
     def test_000_customers(self):
-        product = db.session.query(Product).filter_by(key = 'kolab-14').first()
+        ke14 = db.session.query(Product).filter_by(key = 'kolab-14').first()
+        ke14ea = db.session.query(Product).filter_by(key = 'kolab-14-extras-audit').first()
 
         for x in range(0,random.randint(20,100)):
+            # Randomize the start dates for the customers between now and
+            # 10 years ago.
             fake_start_delta = random.randint(
                     0,
                     # 10 years
@@ -37,18 +40,42 @@ class TestCandlepin(unittest.TestCase):
             # Commit only after the entire transaction is complete
             #db.session.commit()
 
+            end_date = None
+
+            if random.randint(1,100) < 60:
+                end_date = datetime.datetime.fromtimestamp(
+                        (int)(time.time()) - fake_start_delta
+                    ) + datetime.timedelta(days=60)
+
             entitlement = Entitlement(
                     customer_id = customer.id,
-                    product_id = product.id,
-                    quantity = random.randint(1,100)
+                    product_id = ke14.id,
+                    quantity = random.randint(1,75),
+                    start_date = datetime.datetime.fromtimestamp(
+                            (int)(time.time()) - fake_start_delta
+                        ),
+                    end_date = end_date
                 )
 
             db.session.add(entitlement)
 
+            if random.randint(1,100) < 10:
+                entitlement = Entitlement(
+                        customer_id = customer.id,
+                        product_id = ke14ea.id,
+                        quantity = random.randint(1,75),
+                        start_date = datetime.datetime.fromtimestamp(
+                                (int)(time.time()) - fake_start_delta
+                            ),
+                        end_date = end_date
+                    )
+
+                db.session.add(entitlement)
+
             # Commit only after the entire transaction is complete
             #db.session.commit()
 
-            for x in range(0,random.randint(2,40)):
+            for x in range(0,random.randint(2,150)):
                 system = System(customer = customer)
                 db.session.add(system)
 
