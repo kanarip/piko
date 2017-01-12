@@ -48,13 +48,13 @@ def country_by_ipaddr(address):
 
     country = None
 
-    if app.config.get("ENVIRONMENT", "development") == "development":
+    if app.config.get("ENVIRONMENT", "production") == "development":
         country = app.config.get("FAKE_COUNTRY", None)
 
-    if address == None:
+    if address is None:
         country = app.config.get("FAKE_COUNTRY", "CH")
 
-    if country == None:
+    if country is None:
         country = geoip.country_code_by_addr(address)
 
     if country == None or country == '':
@@ -192,9 +192,11 @@ def convert_exchange_rates(rates_usd):
     """
 
     markup = float(1.03)
-    #markup = float(1.00)
+    markup = float(1.00)
 
     rates_chf = {}
+
+    rates_usd['USD'] = 1.0
 
     for currency,rate in rates_usd.iteritems():
         if currency == "CHF":
