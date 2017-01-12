@@ -1,5 +1,8 @@
 import os
 
+from flask import abort
+from flask import Response
+
 from piko import App
 
 template_path = os.path.abspath(
@@ -34,4 +37,45 @@ def register_blueprint(app):
     app.register_blueprint(blueprint)
 
 def register_routes(app):
-    pass
+    # TODO: Require authentication
+    # TODO: Require ownership of the system, or admin role
+    @app.route('/revoke/<system_uuid>')
+    def request(system_uuid):
+        from piko.db import db
+        from piko.apps.pki.db.model import Certificate
+        from piko.apps.candlepin.db.model import System
+
+        system = db.session.query(System).filter_by(uuid=system_uuid).first()
+
+        if system is None:
+            # TODO: Obscure the message
+            return abort(404, "No such system")
+
+        cert = db.session.query(Certificate).filter_by(cn=system_uuid).first()
+
+        if cert is None:
+            # TODO: Obscure the message
+            return abort(404, "No such certificate")
+
+        return dict()
+
+    # TODO: Require authentication
+    @app.route('/download/<system_uuid>')
+    def download(system_uuid):
+        from piko.db import db
+        from piko.apps.pki.db.model import Certificate
+        from piko.apps.candlepin.db.model import System
+
+        system = db.session.query(System).filter_by(uuid=system_uuid).first()
+
+        if system is None:
+            # TODO: Obscure the message
+            return abort(404, "No such system")
+
+        cert = db.session.query(Certificate).filter_by(cn=system_uuid).first()
+
+        if cert is None:
+            # TODO: Obscure the message
+            return abort(404, "No such certificate")
+
+        return Response(cert.certificate + cert.private_key, mimetype='text/plain')
