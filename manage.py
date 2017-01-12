@@ -1,4 +1,6 @@
 #!/bin/env python
+import commentjson
+import json
 import os
 import sys
 
@@ -110,10 +112,27 @@ def load_fixtures():
     db.drop_all()
     db.create_all()
 
+    _fx_path = os.path.join(os.path.dirname(__file__), 'tmp', 'fixtures')
+
+    if not os.path.isdir(_fx_path):
+        os.path.mkdir(_fx_path)
+
     for fixture_dir in app.config.get('FIXTURES_DIRS', ['./tests/fixtures/']):
         for fixture_file in glob.glob(fixture_dir + '/*.json'):
-            fixtures = JSONLoader().load(fixture_file)
+            with open(fixture_file, 'r') as x:
+                target_file = os.path.join(
+                        _fx_path,
+                        os.path.basename(fixture_file)
+                    )
+
+                contents = commentjson.load(x)
+
+                with open(target_file, 'w') as y:
+                    json.dump(contents, y)
+
+            fixtures = JSONLoader().load(target_file)
             load_fixtures(db, fixtures)
+            db.session.commit()
 
 @manager.command
 def update_translations():
