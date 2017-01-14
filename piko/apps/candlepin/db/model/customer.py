@@ -1,17 +1,23 @@
+"""
+    candlepin.db.model.Customer
+    ===========================
+"""
 from datetime import datetime
 from uuid import uuid4
 
 from piko.db import db
 
+
+# pylint: disable=too-few-public-methods
 class Customer(db.Model):
     """
-        A product released.
+        A customer.
     """
     __tablename__ = 'candlepin_customer'
 
     #: The unique ID for the customer. Note that this ID cannot be predictable,
     #: and is generated.
-    id = db.Column(db.Integer, primary_key=True)
+    _id = db.Column(db.Integer, primary_key=True)
 
     #: A name for the customer. Think along the lines of *Example, Inc.*.
     name = db.Column(db.String(128))
@@ -40,10 +46,12 @@ class Customer(db.Model):
         """
         super(Customer, self).__init__(*args, **kwargs)
 
+        # pylint: disable=no-member
         _id = (int)(uuid4().int / 2**97)
 
         if db.session.query(Customer).get(_id) is not None:
             while db.session.query(Customer).get(_id) is not None:
+                # pylint: disable=no-member
                 _id = (int)(uuid4().int / 2**97)
 
-        self.id = _id
+        self._id = _id

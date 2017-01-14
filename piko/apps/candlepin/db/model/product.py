@@ -1,5 +1,11 @@
+"""
+    candlepin.db.model.Product
+    ==========================
+"""
 from piko.db import db
 
+
+# pylint: disable=too-few-public-methods
 class Product(db.Model):
     """
         A product released.
@@ -7,7 +13,7 @@ class Product(db.Model):
     __tablename__ = 'candlepin_product'
 
     #: The unique ID for this product
-    id = db.Column(db.Integer, primary_key=True)
+    _id = db.Column(db.Integer, primary_key=True)
 
     #: A machine readable key
     key = db.Column(db.String(32), index=True)
@@ -19,10 +25,10 @@ class Product(db.Model):
     #: with feature-specific packages that requires the base repository to be
     #: available as well.
     parent_id = db.Column(
-            db.Integer,
-            db.ForeignKey('candlepin_product.id', ondelete='CASCADE'),
-            nullable=True
-        )
+        db.Integer,
+        db.ForeignKey('candlepin_product._id', ondelete='CASCADE'),
+        nullable=True
+    )
 
     #: End of Sales
     eos = db.Column(db.DateTime)

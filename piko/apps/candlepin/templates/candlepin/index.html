@@ -1,0 +1,22 @@
+{% extends theme('includes/layout.html') %}
+{% block content %}
+<h1>Candlepin</h1>
+<p>
+    Welcome to Candlepin.
+</p>
+<p>
+    This application allows you to manage customer system support subscription
+    entitlements.
+</p>
+{% if not g.user %}
+<p>
+    You are not logged in. This could be problematic.
+</p>
+{% endif %}
+<p>
+    <ul>
+        <li><a href="{{ url_for('piko.candlepin.register_customer') }}">Customer Management</a>
+        <li><a href="{{ url_for('piko.candlepin.register_system') }}">System Management</a>
+    </ul>
+</p>
+{% endblock content %}
