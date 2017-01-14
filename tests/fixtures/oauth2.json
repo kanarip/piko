@@ -3,7 +3,7 @@
                 "table": "oauth2_client",
                 "records": [
                         {
-                                "id": "kontact",
+                                "_id": "kontact",
                                 "name": "kontact",
                                 "description": "We've made kontact!",
                                 "secret": "secret-for-kontact",
@@ -12,7 +12,7 @@
                                 "_default_scopes": "email calendar tasks notes"
                             },
                         {
-                                "id": "gnome",
+                                "_id": "gnome",
                                 "name": "GNOME",
                                 "description": "Your garden-variety desktop environment",
                                 "secret": "secret-for-gnome",
@@ -21,7 +21,7 @@
                                 "_default_scopes": "email calendar tasks notes"
                             },
                         {
-                                "id": "piko-candlepin",
+                                "_id": "piko-candlepin",
                                 "name": "piko",
                                 "description": "You may have entitled your system!",
                                 "secret": "secret-for-piko-candlepin",

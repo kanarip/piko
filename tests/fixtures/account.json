@@ -3,11 +3,11 @@
                 "table": "group",
                 "records": [
                         {
-                                "id": 1,
+                                "_id": 1,
                                 "_name": "Example, Inc."
                             },
                         {
-                                "id": 2,
+                                "_id": 2,
                                 "_name": "Doe Family"
                             }
                     ]
@@ -16,7 +16,7 @@
                 "table": "person",
                 "records": [
                         {
-                                "id": 1,
+                                "_id": 1,
                                 "_name": "John Doe",
                                 // simple at 12-18 rounds
                                 // 12:
@@ -35,13 +35,13 @@
                                 //"password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
                             },
                         {
-                                "id": 2,
+                                "_id": 2,
                                 "_name": "Jane Doe",
                                 "password_hash": "simple at 18 rounds",
                                 "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
                             },
                         {
-                                "id": 3,
+                                "_id": 3,
                                 "_name": "Joe Sixpack",
                                 "password_hash": "simple at 18 rounds",
                                 "password_hash": "$2b$18$bpfiVhNqXfRX1f/Ovo3AIedB3Z0R601dhkDmqTQfuueRVn1ucur3m"
@@ -70,45 +70,109 @@
                     ]
             },
         {
+                "table": "asp_domain",
+                "records": [
+                        {
+                                "_id": 1,
+                                "namespace": "state-unknown.org",
+                                "state": 1,
+                                "parent_id": null
+                            },
+                        {
+                                "_id": 2,
+                                "namespace": "state-new.org",
+                                "state": 2,
+                                "parent_id": null
+                            },
+                        {
+                                "_id": 3,
+                                "namespace": "state-external.org",
+                                "state": 4,
+                                "parent_id": null
+                            },
+                        {
+                                "_id": 4,
+                                "namespace": "state-confirmed.org",
+                                "state": 8,
+                                "parent_id": null
+                            },
+                        {
+                                "_id": 5,
+                                "namespace": "state-secure.org",
+                                "state": 16,
+                                "parent_id": null
+                            },
+                        {
+                                "_id": 6,
+                                "namespace": "state-hosted.org",
+                                "state": 32,
+                                "parent_id": null
+                            },
+                        {
+                                "_id": 7,
+                                "namespace": "state-suspended.org",
+                                "state": 64,
+                                "parent_id": null
+                            },
+                        {
+                                "_id": 8,
+                                "namespace": "state-confirmed-then-suspended.org",
+                                "state": 72,
+                                "parent_id": null
+                            },
+                        {
+                                "_id": 9,
+                                "namespace": "doefamily.org",
+                                "state": 40,
+                                "parent_id": null
+                            }
+                    ]
+            },
+        {
                 "table": "account",
                 "records": [
                         {
-                                "id": 1,
+                                "_id": 1,
                                 "_name": "john@doefamily.org",
                                 "type_name": "email",
                                 "remote_id": -1,
+                                "domain_id": 9,
                                 "person_id": 1,
                                 "group_id": 2
                             },
                         {
-                                "id": 2,
+                                "_id": 2,
                                 "_name": "john.doe@example.com",
                                 "type_name": "email",
                                 "remote_id": -1,
+                                "domain_id": null,
                                 "person_id": 1,
                                 "group_id": 1
                             },
                         {
-                                "id": 3,
+                                "_id": 3,
                                 "_name": "@exampleinc",
                                 "type_name": "twitter",
                                 "remote_id": 100,
+                                "domain_id": null,
                                 "person_id": null,
                                 "group_id": 1
                             },
                         {
-                                "id": 4,
+                                "_id": 4,
                                 "_name": "@examplary",
                                 "type_name": "twitter",
                                 "remote_id": 101,
+                                "domain_id": null,
                                 "person_id": null,
                                 "group_id": 1
                             },
                         {
-                                "id": 5,
+                                "_id": 5,
                                 "_name": "jane@doefamily.org",
                                 "type_name": "email",
                                 "remote_id": -1,
+                                "domain_id": 9,
                                 "person_id": 1,
                                 "group_id": 2
                             }
