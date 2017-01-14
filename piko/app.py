@@ -27,6 +27,7 @@ from piko.translate import _
 # pylint: disable=C0103
 base_path = os.path.dirname(__file__)
 
+
 class App(Flask):
     """
         An abstraction class for Flask, that loops-and-hooks everything.
@@ -37,9 +38,11 @@ class App(Flask):
 
         self.config.from_object('piko.settings')
 
-        if os.environ.has_key('PIKO_SETTINGS'):
+        if 'PIKO_SETTINGS' in os.environ:
             if os.path.isfile(os.environ['PIKO_SETTINGS']):
                 self.config.from_envvar('PIKO_SETTINGS')
+
+        self.debug = self.config.get('DEBUG', False)
 
         # pylint: disable=E1101
         self.jinja_env.filters['gettext'] = gettext
@@ -66,7 +69,11 @@ class App(Flask):
             candidates.append(candidate)
 
         for theme in candidates:
-            theme_mod = __import__('piko.themes.' + theme, fromlist=['register'])
+            theme_mod = __import__(
+                'piko.themes.' + theme,
+                fromlist=['register']
+            )
+
             bundles = theme_mod.register(self.assets, bundles)
 
         self.assets.register(bundles)
@@ -118,9 +125,19 @@ class App(Flask):
             _data = _data.replace('__EXECUTION_TIME__', str(diff))
             _data = _data.replace('__GEOIP_COUNTRY__', country)
             _data = _data.replace('__I18N_CURRENCY__', currency)
-            _data = _data.replace('__I18N_USDRATE__', str(currency_usd_exchange_rate))
-            _data = _data.replace('__I18N_CHFRATE__', str(currency_chf_exchange_rate))
+
+            _data = _data.replace(
+                '__I18N_USDRATE__',
+                str(currency_usd_exchange_rate)
+            )
+
+            _data = _data.replace(
+                '__I18N_CHFRATE__',
+                str(currency_chf_exchange_rate)
+            )
+
             _data = _data.replace('__L10N_LANGUAGE__', locale)
+            _data = _data.replace('__APP_NAME__', self.template_folder)
 
             response.set_data(_data)
 
@@ -189,6 +206,7 @@ class App(Flask):
             cached appropriately.
         """
         kwargs['now'] = datetime.datetime.utcnow()
+
         try:
             from .themes import render_template
         except ImportError:
