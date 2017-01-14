@@ -1,0 +1,9 @@
+hosts = localhost
+user = piko
+password = piko
+dbname = piko
+query = SELECT a._name FROM account a
+    LEFT JOIN asp_domain d ON a.domain_id = d._id
+    WHERE a._name = '%s' AND
+        d.namespace = '%d' AND
+        d.state & 32;

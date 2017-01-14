@@ -1,0 +1,12 @@
+hosts = localhost
+user = piko
+password = piko
+dbname = piko
+query = SELECT namespace FROM asp_domain
+    WHERE namespace = '%s' AND
+        # Ensure that the domain is confirmed.
+        state & 8 AND
+        # Ensure that the domain is hosted.
+        state & 32 AND
+        # Ensure that the domain is not suspended
+        NOT state & 64;
