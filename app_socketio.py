@@ -38,7 +38,7 @@ for candidate in os.listdir(base_path):
 
     try:
         # Obtain the register function...
-        application = __import__(mod_name, fromlist=['register'])
+        application = __import__(mod_name, fromlist=['register_blueprint'])
 
         # ...and execute it.
         application.register_blueprint(app)
