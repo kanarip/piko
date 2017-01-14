@@ -10,26 +10,21 @@ import uuid
 from flask import abort
 from flask import g
 from flask import Flask
-from flask import redirect
 from flask import request
 from flask import session
-from flask import url_for
 
-from flask.ext.assets import Bundle
+# pylint: disable=E0611,F0401
 from flask.ext.assets import Environment
 
-from flask.ext.babel import Babel
 from flask.ext.babel import gettext
 from flask.ext.htmlmin import HTMLMIN
 from flask.ext.themes import setup_themes
-from flask.ext.socketio import disconnect
-
-from functools import wraps
 
 from piko.l10n import register_l10n
 from piko.translate import _
 
 #: The base path for this application
+# pylint: disable=C0103
 base_path = os.path.dirname(__file__)
 
 class App(Flask):
@@ -46,6 +41,7 @@ class App(Flask):
             if os.path.isfile(os.environ['PIKO_SETTINGS']):
                 self.config.from_envvar('PIKO_SETTINGS')
 
+        # pylint: disable=E1101
         self.jinja_env.filters['gettext'] = gettext
 
         self.after_request(self.after_request_handler)
@@ -70,7 +66,7 @@ class App(Flask):
             candidates.append(candidate)
 
         for theme in candidates:
-            theme_mod = __import__('piko.themes.' + theme, fromlist = [ 'register' ])
+            theme_mod = __import__('piko.themes.' + theme, fromlist=['register'])
             bundles = theme_mod.register(self.assets, bundles)
 
         self.assets.register(bundles)
@@ -79,7 +75,11 @@ class App(Flask):
     def register_blueprint(self, *args, **kwargs):
         super(App, self).register_blueprint(*args, **kwargs)
 
+    # pylint: disable=no-self-use
     def abort(self, code, message=None):
+        """
+            Return a Flask Response via abort().
+        """
         return abort(code, message)
 
     def after_request_handler(self, response):
@@ -124,8 +124,10 @@ class App(Flask):
 
             response.set_data(_data)
 
+        # pylint: disable=broad-except
         except Exception, errmsg:
             import traceback
+            # pylint: disable=superfluous-parens
             print("Exception: %s" % (errmsg))
             print("%s" % (traceback.format_exc()))
 
@@ -140,7 +142,7 @@ class App(Flask):
         g.environment = self.config.get('ENVIRONMENT', 'production')
         g.debug = self.config.get('DEBUG', False)
 
-        if not 'uuid' in session:
+        if 'uuid' not in session:
             session['uuid'] = uuid.uuid4().hex
 
         if 'locale' in session:
@@ -153,11 +155,18 @@ class App(Flask):
 
             try:
                 account = db.session.query(Account).get(session['account_id'])
+
+            # pylint: disable=broad-except
             except Exception, errmsg:
                 db.session.rollback()
                 account = db.session.query(Account).get(session['account_id'])
 
-            if account == None:
+                import traceback
+                # pylint: disable=superfluous-parens
+                print("Exception: %s" % (errmsg))
+                print("%s" % (traceback.format_exc()))
+
+            if account is None:
                 session.clear()
 
             else:
@@ -174,14 +183,31 @@ class App(Flask):
         return dict(_=_)
 
     def render_template(self, template, *args, **kwargs):
+        """
+            Render a template, but pull out some of the keywords and insert
+            some of the user- and session-specific foo -- so that it can be
+            cached appropriately.
+        """
         kwargs['now'] = datetime.datetime.utcnow()
         try:
             from .themes import render_template
         except ImportError:
             from flask import render_template
-        finally:
-            return render_template(template, *args, **kwargs)
+
+        return render_template(template, *args, **kwargs)
 
     def teardown_request_handler(self, exception):
+        """
+            What do we do when we we tear down the request?
+
+            :param exception:   An :py:class:`Exception`
+            :returns:           None
+        """
+        if exception is not None:
+            import traceback
+            # pylint: disable=superfluous-parens
+            print("Exception: %s" % (exception))
+            print("%s" % (traceback.format_exc()))
+
         from piko.db import db
         db.session.close()
