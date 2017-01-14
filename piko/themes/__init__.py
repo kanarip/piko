@@ -1,8 +1,12 @@
+"""
+    Render templates from a theme, and cache them.
+"""
 from flask import abort
 from flask import g
 from flask import request
 from flask import session
 
+# pylint: disable=no-name-in-module,import-error
 from flask.ext.themes import render_theme_template as _render_theme_template
 from flask.ext.themes import get_themes_list
 from flask.ext.themes import setup_themes
@@ -10,10 +14,30 @@ from flask.ext.themes import setup_themes
 from piko import App
 from piko.cache import cache
 
+# pylint: disable=invalid-name
 app = App('piko')
 
-@cache.memoize()
-def render_theme_template(theme, template, locale, country, currency, user, _flash, **kwargs):
+# pylint: disable=invalid-name
+cache_timeout = 0
+
+if app.config.get('ENVIRONMENT', 'production') == 'development':
+    if app.config.get('DEBUG', False):
+        cache_timeout = 1
+
+
+@cache.memoize(timeout=cache_timeout)
+# pylint: disable=too-many-arguments
+# pylint: disable=unused-argument
+def render_theme_template(
+        theme,
+        template,
+        locale,
+        country,
+        currency,
+        user,
+        _flash,
+        **kwargs):
+
     """
         A cacheable, theme-based, language specific proxy function to
         :py:func:`flaskext.themes.render_theme_template`.
@@ -24,7 +48,15 @@ def render_theme_template(theme, template, locale, country, currency, user, _fla
         :param  kwargs:     The context to pass on to the template.
     """
 
-    return _render_theme_template(theme, template, lang=locale, country=country, currency=currency, **kwargs)
+    return _render_theme_template(
+        theme,
+        template,
+        lang=locale,
+        country=country,
+        currency=currency,
+        **kwargs
+    )
+
 
 def render_template(template, country=None, currency=None, **kwargs):
     """
@@ -41,14 +73,15 @@ def render_template(template, country=None, currency=None, **kwargs):
     """
     from piko.i18n import country_by_ipaddr
     from piko.i18n import currency_by_ipaddr
+    from piko.i18n import exchange_rate
 
-    if country == None:
+    if country is None:
         country = country_by_ipaddr(request.remote_addr)
 
-    if currency == None:
+    if currency is None:
         currency = currency_by_ipaddr(request.remote_addr)
 
-    config_theme = app.config.get('DEFAULT_THEME')
+    exchange_rate = exchange_rate(currency)
 
     theme = session.get('theme', app.config.get('DEFAULT_THEME', 'default'))
     user = session.get('uuid', None)
@@ -58,11 +91,19 @@ def render_template(template, country=None, currency=None, **kwargs):
     flashes = session.get('_flashes', [])
     _flash = ""
 
-    for c,m in flashes:
-        _flash += "%r/%r" % (c,m)
+    for c, m in flashes:
+        _flash += "%r/%r" % (c, m)
 
     locale = g.get('locale', 'en')
 
-    return render_theme_template(theme, template, locale, country, currency, user, _flash, **kwargs)
-
-
+    return render_theme_template(
+        theme,
+        template,
+        locale,
+        country,
+        currency,
+        user,
+        _flash,
+        exchange_rate=exchange_rate,
+        **kwargs
+    )
