@@ -1,18 +1,25 @@
-import datetime
-import os
+"""
+    .. TODO:: A module docstring.
+"""
 import uuid
 
 from piko.db import db
 
+
+# pylint: disable=too-few-public-methods
 class SessionTransaction(db.Model):
     """
-        A task.
+        A session-specific transaction.
     """
     __tablename__ = "session_transaction"
 
-    id = db.Column(db.Integer, primary_key=True)
+    _id = db.Column(db.Integer, primary_key=True)
 
-    session_id = db.Column(db.String(64), db.ForeignKey('session.id', ondelete="CASCADE"), nullable=False)
+    session_id = db.Column(
+        db.String(64),
+        db.ForeignKey('session.uuid', ondelete="CASCADE"),
+        nullable=False
+    )
 
     transaction_id = db.Column(db.String(64), nullable=False)
 

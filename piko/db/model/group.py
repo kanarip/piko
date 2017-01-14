@@ -1,5 +1,12 @@
+"""
+    .. TODO:: A module docstring.
+"""
+import uuid
+
 from piko.db import db
 
+
+# pylint: disable=too-few-public-methods
 class Group(db.Model):
     """
         An abstract, digital representation of a group of
@@ -16,7 +23,7 @@ class Group(db.Model):
     __tablename__ = 'group'
 
     #: An automatically generated unique integer ID
-    id = db.Column(db.Integer, primary_key=True)
+    _id = db.Column(db.Integer, primary_key=True)
 
     _name = db.Column(db.String(255), nullable=False)
 
@@ -27,10 +34,10 @@ class Group(db.Model):
     #: List of :py:class:`piko.db.model.Person` records associated
     #: with this :py:class:`Group`.
     persons = db.relationship(
-            'Person',
-            secondary = "person_groups",
-            cascade = "delete"
-        )
+        'Person',
+        secondary="person_groups",
+        cascade="delete"
+    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -38,13 +45,14 @@ class Group(db.Model):
         """
         super(Group, self).__init__(*args, **kwargs)
 
+        # pylint: disable=no-member
         _id = (int)(uuid.uuid4().int / 2**97)
 
         if db.session.query(Group).get(_id) is not None:
             while db.session.query(Group).get(_id) is not None:
                 _id = (int)(uuid.uuid4().int / 2**97)
 
-        self.id = _id
+        self._id = _id
 
     @property
     def name(self):
@@ -57,4 +65,3 @@ class Group(db.Model):
     @name.setter
     def name(self, value):
         self._name = value
-

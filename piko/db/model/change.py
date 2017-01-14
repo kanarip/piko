@@ -1,7 +1,12 @@
+"""
+    .. TODO:: A module docstring.
+"""
 from datetime import datetime
 
 from piko.db import db
 
+
+# pylint: disable=too-few-public-methods
 class Change(db.Model):
     """
         This object represents an entry of a ChangeLog-type table.
@@ -9,24 +14,42 @@ class Change(db.Model):
     __tablename__ = "changes"
 
     # Yearly
-    #__tablename__ = eval('"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y")))
+    # __tablename__ = eval(
+    #     '"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y"))
+    # )
 
     # Monthly
-    #__tablename__ = eval('"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y_%m")))
+    # __tablename__ = eval(
+    #     '"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y_%m"))
+    # )
 
     # Daily
-    #__tablename__ = eval('"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y_%m_%d")))
+    # __tablename__ = eval(
+    #     '"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y_%m_%d"))
+    # )
 
     # Hourly
-    #__tablename__ = eval('"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y_%m_%d_%H")))
+    # __tablename__ = eval(
+    #     '"changes_%s"' % (
+    #         datetime.strftime(datetime.utcnow(), "%Y_%m_%d_%H")
+    #     )
+    # )
 
     # Minutely
-    #__tablename__ = eval('"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y_%m_%d_%H_%M")))
+    # __tablename__ = eval(
+    #     '"changes_%s"' % (
+    #         datetime.strftime(datetime.utcnow(), "%Y_%m_%d_%H_%M")
+    #     )
+    # )
 
     # Secondly
-    #__tablename__ = eval('"changes_%s"' % (datetime.strftime(datetime.utcnow(), "%Y_%m_%d_%H_%M_%S")))
+    # __tablename__ = eval(
+    #     '"changes_%s"' % (
+    #         datetime.strftime(datetime.utcnow(), "%Y_%m_%d_%H_%M_%S")
+    #     )
+    # )
 
-    id = db.Column(db.Integer, primary_key=True)
+    _id = db.Column(db.Integer, primary_key=True)
     object_name = db.Column(db.String(64))
     object_id = db.Column(db.Integer)
     value_from = db.Column(db.Text, nullable=True)

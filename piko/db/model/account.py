@@ -1,7 +1,12 @@
-import base64
+"""
+    An account.
+
+    Sometimes used by a human being, sometimes not.
+
+    Human beings log in with any of the accounts associated with their
+    :py:class:`piko.db.model.Person`.
+"""
 import datetime
-import os
-import otpauth
 import uuid
 
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -10,7 +15,11 @@ from piko.db import db
 
 from .accountlogin import AccountLogin
 from .change import Change
-from .otp import *
+
+from .otp import HOTPToken
+from .otp import TANToken
+from .otp import TOTPToken
+
 
 class Account(db.Model):
     """
@@ -22,29 +31,48 @@ class Account(db.Model):
     __tablename__ = "account"
 
     #: A generated unique integer ID.
-    id = db.Column(db.Integer, primary_key=True)
+    _id = db.Column(db.Integer, primary_key=True)
 
     #: The account name. Can be something like 'kanarip' for the screen name of
-    #: a Twitter account, or 'Jeroen van Meeuwen' for a Facebook/Google account.
+    #: a Twitter account, or 'Jeroen van Meeuwen' for a Facebook/Google
+    #: account.
     _name = db.Column(db.String(255), nullable=False, index=True)
 
     #: The type of account registration we've gone through.
     type_name = db.Column(db.String(64), nullable=False)
 
     #: A remote ID, ensuring remote account renames do not fiddle with this
-    #: database.
+    #: database. This is used for things like Twitter, Facebook and Google+
+    #: accounts, but also LDAP accounts.
     remote_id = db.Column(db.String(64), default=-1, nullable=False)
 
-    #: The human being, if any, that this account belongs to. Links to :py:attr:`piko.db.model.Person.id`
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=True)
+    #: Domain ID
+    domain_id = db.Column(
+        db.Integer,
+        db.ForeignKey('asp_domain._id', ondelete='CASCADE'),
+        nullable=True
+    )
+
+    #: The human being, if any, that this account belongs to. Links to
+    #: :py:attr:`piko.db.model.Person._id`
+    person_id = db.Column(
+        db.Integer,
+        db.ForeignKey('person._id', ondelete='CASCADE'),
+        nullable=True
+    )
 
     #: The digital person record this account belongs to.
     person = db.relationship('Person')
 
     #: The group, if any, that this account belongs to.
-    group_id = db.Column(db.Integer, db.ForeignKey('group.id', ondelete='CASCADE'), nullable=True)
+    group_id = db.Column(
+        db.Integer,
+        db.ForeignKey('group._id', ondelete='CASCADE'),
+        nullable=True
+    )
 
-    #: The digital :py:class:`piko.db.model.Group` record this account belongs to.
+    #: The digital :py:class:`piko.db.model.Group` record this account belongs
+    #: to.
     group = db.relationship('Group')
 
     #: The creation date of this account.
@@ -59,30 +87,36 @@ class Account(db.Model):
     logins = db.relationship('AccountLogin')
 
     #: A parent account ID
-    parent_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=True)
+    parent_id = db.Column(
+        db.Integer,
+        db.ForeignKey('account._id'),
+        nullable=True
+    )
 
     #: Lock status
     locked = db.Column(db.Boolean, default=False)
 
     roles = db.relationship(
-            'Role',
-            secondary="account_roles",
-            backref="accounts",
-            cascade="delete"
-        )
+        'Role',
+        secondary="account_roles",
+        backref="accounts",
+        cascade="delete"
+    )
 
     def __init__(self, *args, **kwargs):
         super(Account, self).__init__(*args, **kwargs)
 
+        # pylint: disable=no-member
         _id = (int)(uuid.uuid4().int / 2**97)
 
         if db.session.query(Account).get(_id) is not None:
             while db.session.query(Account).get(_id) is not None:
                 _id = (int)(uuid.uuid4().int / 2**97)
 
-        self.id = _id
+        self._id = _id
 
     @hybrid_property
+    # pylint: disable=no-self-use
     def logins_failed(self):
         """
             The number of failed logins for this account.
@@ -90,6 +124,7 @@ class Account(db.Model):
         return db.session.query(AccountLogin).filter_by(success=False).count()
 
     @hybrid_property
+    # pylint: disable=no-self-use
     def logins_success(self):
         """
             The number of successful logins for this account.
@@ -101,17 +136,41 @@ class Account(db.Model):
         """
             The second factor for this account, if any.
         """
+        # pylint: disable=not-an-iterable
         if len([x for x in self.second_factors if x.confirmed]) > 0:
+            # pylint: disable=unsubscriptable-object
             return self.second_factors[0]
 
         return False
 
     @hybrid_property
     def second_factors(self):
+        """
+            Contains a list of second factors that are confirmed.
+        """
         factors = []
-        factors.extend(db.session.query(HOTPToken).filter_by(account_id=self.id,confirmed=True).all())
-        factors.extend(db.session.query(TANToken).filter_by(account_id=self.id,confirmed=True).all())
-        factors.extend(db.session.query(TOTPToken).filter_by(account_id=self.id,confirmed=True).all())
+
+        factors.extend(
+            db.session.query(HOTPToken).filter_by(
+                account_id=self._id,
+                confirmed=True
+            ).all()
+        )
+
+        factors.extend(
+            db.session.query(TANToken).filter_by(
+                account_id=self._id,
+                confirmed=True
+            ).all()
+        )
+
+        factors.extend(
+            db.session.query(TOTPToken).filter_by(
+                account_id=self._id,
+                confirmed=True
+            ).all()
+        )
+
         return factors
 
     @property
@@ -125,18 +184,18 @@ class Account(db.Model):
     # and not having both increases the coverage. Cannot skip the
     # @property decorated one though...
     #
-    #@name.getter
-    #def name(self):
-    #    return self._name
+    # @name.getter
+    # def name(self):
+    #     return self._name
 
     @name.setter
     def name(self, value):
         change = Change(
-                self.__class__.__name__,
-                self.id,
-                self._name,
-                value
-            )
+            self.__class__.__name__,
+            self._id,
+            self._name,
+            value
+        )
 
         db.session.add(change)
 
@@ -156,6 +215,9 @@ class Account(db.Model):
         return func(token)
 
     def token_config_uri(self):
+        """
+            Generate and return the configuration URL for the token.
+        """
         factor = self.second_factor
         func = getattr(factor, 'token_config_uri')
         return func(self._name)
@@ -165,11 +227,10 @@ class Account(db.Model):
             Return a dictionary representation of the account data.
         """
         return {
-                "id": self.id,
-                "name": self._name,
-                "type_name": self.type_name,
-                "created": self.created,
-                "modified": self.modified,
-                "lastlogin": self.lastlogin
-            }
-
+            "id": self._id,
+            "name": self._name,
+            "type_name": self.type_name,
+            "created": self.created,
+            "modified": self.modified,
+            "lastlogin": self.lastlogin
+        }
