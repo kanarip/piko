@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
+"""
+    .. TODO:: A module docstring.
+"""
 
-import grp
 import logging
 import logging.handlers
 import os
-import pwd
 import sys
-import time
 
-from piko.translate import _
 
 class Logger(logging.Logger):
     """
@@ -32,23 +31,23 @@ class Logger(logging.Logger):
                 loglevel = logging.DEBUG
                 break
 
-            if '-d' == arg:
+            if arg == '-d':
                 debuglevel = -1
                 continue
 
-            if '-l' == arg:
+            if arg == '-l':
                 loglevel = -1
                 continue
 
             if loglevel == -1:
-                if hasattr(logging,arg.upper()):
-                    loglevel = getattr(logging,arg.upper())
+                if hasattr(logging, arg.upper()):
+                    loglevel = getattr(logging, arg.upper())
                 else:
                     loglevel = logging.DEBUG
 
-    def __init__(self, *args, **kw):
-        if kw.has_key('name'):
-            name = kw['name']
+    def __init__(self, *args, **kwargs):
+        if 'name' in kwargs:
+            name = kwargs['name']
         elif len(args) == 1:
             name = args[0]
         else:
@@ -63,13 +62,17 @@ class Logger(logging.Logger):
 
         self.addHandler(self.console_stdout)
 
-    def debug(self, msg, level=1, *args, **kw):
+    def error(self, msg, fatal=False, *args, **kwargs):
+        super(Logger, self).error(msg, *args, **kwargs)
+
+        if fatal:
+            sys.exit(1)
+
+    def debug(self, msg, level=1, *args, **kwargs):
         self.setLevel(self.loglevel)
         # Work around other applications not using various levels of debugging
         if not self.name.startswith('piko') and not self.debuglevel == 9:
             return
 
         if level <= self.debuglevel:
-            # TODO: Not the way it's supposed to work!
-            self.log(logging.DEBUG, '[%d]: %s' % (os.getpid(),msg))
-
+            self.log(logging.DEBUG, '[%d]: %s', os.getpid(), msg)
