@@ -65,12 +65,14 @@ manager = Manager(app)
 manager.add_command('assets', ManageAssets)
 manager.add_command('db', MigrateCommand)
 
+
 @manager.command
 def clear_cache():
     """
         Clear the caches. All of it.
     """
     cache.clear()
+
 
 @manager.command
 def create_db():
@@ -79,12 +81,14 @@ def create_db():
     """
     db.create_all()
 
+
 @manager.command
 def drop_db():
     """
         Drop the tables from the database.
     """
     db.drop_all()
+
 
 @manager.command
 def init_translations():
@@ -120,6 +124,7 @@ def init_translations():
             ]
         )
 
+
 @manager.command
 def load_fixtures():
     """
@@ -154,6 +159,7 @@ def load_fixtures():
             fixtures = JSONLoader().load(target_file)
             flask_load_fixtures(db, fixtures)
             db.session.commit()
+
 
 @manager.command
 def update_translations():
@@ -198,6 +204,7 @@ def update_translations():
         ]
     )
 
+
 @manager.command
 def test():
     """
@@ -205,7 +212,7 @@ def test():
     """
     from subprocess import call
     from subprocess import Popen
-    os.environ['PACK_SETTINGS'] = os.path.abspath('./tests/settings.py')
+    #os.environ['PIKO_SETTINGS'] = os.path.abspath('./tests/settings.py')
     os.environ['PYTHONPATH'] = ':'.join(
         ['.'] + os.environ.get('PYTHONPATH', '').split(':')
     )
@@ -248,6 +255,7 @@ def test():
 
     p1.terminate()
     p1.wait()
+
 
 if __name__ == "__main__":
     manager.run()
