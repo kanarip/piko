@@ -3,7 +3,7 @@
                 "table": "candlepin_customer",
                 "records": [
                         {
-                                "_id": 1,
+                                "uuid": 1,
                                 "name": "kanarip"
                             }
                     ]
@@ -12,7 +12,6 @@
                 "table": "candlepin_system",
                 "records": [
                         {
-                                "_id": 1,
                                 "uuid": "8c355025-d5a4-4773-b627-b599af452d35",
                                 "customer_id": 1
                             }
@@ -23,40 +22,40 @@
                 "table": "candlepin_product",
                 "records": [
                         {
-                                "_id": 1,
+                                "uuid": 1,
                                 "key": "kolab-winterfell",
                                 "name": "Kolab Winterfell"
                             },
                         {
-                                "_id": 2,
+                                "uuid": 2,
                                 "key": "kolab-14",
                                 "name": "Kolab Enterprise 14"
                             },
                         {
-                                "_id": 3,
+                                "uuid": 3,
                                 "key": "kolab-14-extras-audit",
                                 "name": "Kolab Enterprise 14 - Extras Audit",
                                 "parend_id": 2
                             },
                         {
-                                "_id": 4,
+                                "uuid": 4,
                                 "key": "kolab-14-extras-fasttrack",
                                 "name": "Kolab Enterprise 14 - Extras Fasttrack",
                                 "parent_id": 2
                             },
                         {
-                                "_id": 5,
+                                "uuid": 5,
                                 "key": "kolab-14-extras-puppet",
                                 "name": "Kolab Enterprise 14 - Extras Puppet",
                                 "parent_id": 2
                             },
                         {
-                                "_id": 6,
+                                "uuid": 6,
                                 "key": "kolab-16",
                                 "name": "Kolab Enterprise 16"
                             },
                         {
-                                "_id": 7,
+                                "uuid": 7,
                                 "key": "kolab-16-extras-fasttrack",
                                 "name": "Kolab Enterprise 16 - Extras Fasttrack",
                                 "parent_id": 6
@@ -68,7 +67,7 @@
                 "table": "candlepin_entitlement",
                 "records": [
                         {
-                                "_id": 1,
+                                "uuid": 1,
                                 "customer_id": 1,
                                 "product_id": 1,
                                 "quantity": 1
@@ -80,9 +79,9 @@
                 "table": "candlepin_subscription",
                 "records": [
                         {
-                                "_id": 1,
+                                "uuid": 1,
                                 "entitlement_id": 1,
-                                "system_id": 1
+                                "system_id": "8c355025-d5a4-4773-b627-b599af452d35"
                             }
                     ]
             }

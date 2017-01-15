@@ -3,23 +3,23 @@
                 "table": "busby_distr",
                 "records": [
                         {
-                                "_id": 1,
+                                "uuid": 1,
                                 "key": "fedora"
                             },
                         {
-                                "_id": 2,
+                                "uuid": 2,
                                 "key": "redhat"
                             },
                         {
-                                "_id": 3,
+                                "uuid": 3,
                                 "key": "centos"
                             },
                         {
-                                "_id": 4,
+                                "uuid": 4,
                                 "key": "debian"
                             },
                         {
-                                "_id": 5,
+                                "uuid": 5,
                                 "key": "ubuntu"
                             }
                     ]
