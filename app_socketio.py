@@ -57,4 +57,3 @@ for name, blueprint in app.blueprints.iteritems():
 if __name__ == "__main__":
     debug = app.config.get('DEBUG', False)
     socketio.run(app, debug=debug)
-    #app.run(debug=debug)
