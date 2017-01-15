@@ -12,6 +12,7 @@ TEMPLATE_PATH = os.path.abspath(
     )
 )
 
+
 def register(apps):
     """
         Register this application as a Flask application.
@@ -29,12 +30,13 @@ def register(apps):
 
     return apps
 
+
 def register_blueprint(app):
     """
         Register this application as a Flask blueprint.
     """
     from piko import Blueprint
-    blueprint = Blueprint(app, 'piko.asp', __name__)
+    blueprint = Blueprint(app, 'piko.asp', __name__, url_prefix='/asp')
 
     register_routes(blueprint)
 
@@ -51,22 +53,26 @@ def register_blueprint(app):
 
     app.register_blueprint(blueprint)
 
+
 def register_routes(app):
     """
         Register routes with the main Flask application.
     """
     @app.route('/')
+    # pylint: disable=unused-variable
     def index():
         """
             Dummy.
         """
         return app.abort(404)
 
+
 def register_api_routes(app):
     """
         Register API routes with the main Flask application.
     """
     @app.route('/')
+    # pylint: disable=unused-variable
     def index():
         """
             Dummy.
