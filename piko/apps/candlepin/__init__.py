@@ -88,7 +88,7 @@ def register_routes(app):
             Register a customer entity through the web UI.
         """
         return app.render_template(
-            'register/customer.html'
+            'candlepin/register/customer.html'
         )
 
     @app.route('/register/system')
@@ -104,7 +104,7 @@ def register_routes(app):
         auth_token = "asd"
 
         return app.render_template(
-            'register/system.html',
+            'candlepin/register/system.html',
             auth_token=auth_token
         )
 
@@ -114,7 +114,7 @@ def register_routes(app):
             A fake admin interface.
         """
         return app.render_template(
-            'admin/index.html',
+            'candlepin/admin/index.html',
             dict(
                 customers={},
                 systems={}
