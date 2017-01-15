@@ -4,7 +4,7 @@ class OAuth2Client(db.Model):
     __tablename__ = 'oauth2_client'
 
     #: The Client ID. Distributed to application owners
-    id = db.Column(db.String(36), primary_key=True)
+    uuid = db.Column(db.String(36), primary_key=True)
 
     #: A human readable name, not required.
     name = db.Column(db.String(40))
@@ -22,7 +22,7 @@ class OAuth2Client(db.Model):
 
     @property
     def client_id(self):
-        return self.id
+        return self.uuid
 
     @property
     def client_secret(self):

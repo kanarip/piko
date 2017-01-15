@@ -7,7 +7,7 @@ class KBVote(db.Model):
 
     account_id = db.Column(
         db.Integer,
-        db.ForeignKey('account._id', ondelete="CASCADE"),
+        db.ForeignKey('account.uuid', ondelete="CASCADE"),
         index=True
     )
 

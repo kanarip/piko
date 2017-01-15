@@ -23,14 +23,17 @@ class Certificate(db.Model):
     def __init__(self, *args, **kwargs):
         super(Certificate, self).__init__(*args, **kwargs)
 
-        cert = crypto.load_certificate(crypto.FILETYPE_PEM, kwargs['certificate'])
+        cert = crypto.load_certificate(
+            crypto.FILETYPE_PEM,
+            kwargs['certificate']
+        )
 
         self.not_before = datetime.datetime.strptime(
-                cert.get_notBefore(),
-                '%Y%m%d%H%M%SZ'
-            )
+            cert.get_notBefore(),
+            '%Y%m%d%H%M%SZ'
+        )
 
         self.not_after = datetime.datetime.strptime(
-                cert.get_notAfter(),
-                '%Y%m%d%H%M%SZ'
-            )
+            cert.get_notAfter(),
+            '%Y%m%d%H%M%SZ'
+        )

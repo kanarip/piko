@@ -1,20 +1,26 @@
+"""
+    A grant.
+"""
 from piko.db import db
 
 class OAuth2Grant(db.Model):
+    """
+        A grant.
+    """
     __tablename__ = 'oauth2_grant'
 
-    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     account_id = db.Column(
-            db.Integer, db.ForeignKey('account.id', ondelete='CASCADE')
-        )
+        db.Integer, db.ForeignKey('account.uuid', ondelete='CASCADE')
+    )
 
     account = db.relationship('Account')
 
     client_id = db.Column(
-            db.String(40), db.ForeignKey('oauth2_client.id'),
-            nullable=False,
-        )
+        db.String(40), db.ForeignKey('oauth2_client.uuid'),
+        nullable=False
+    )
 
     client = db.relationship('OAuth2Client')
 
@@ -26,6 +32,9 @@ class OAuth2Grant(db.Model):
     _scopes = db.Column(db.Text)
 
     def delete(self):
+        """
+            .. TODO:: A docstring.
+        """
         db.session.delete(self)
         db.session.commit()
         return self
@@ -39,6 +48,9 @@ class OAuth2Grant(db.Model):
 
     @property
     def scopes(self):
+        """
+            .. TODO:: A docstring.
+        """
         if self._scopes:
             return self._scopes.split()
         return []

@@ -5,8 +5,10 @@
 import calendar
 from datetime import datetime
 from datetime import timedelta
-from uuid import uuid4
+
 from piko.db import db
+
+from piko.utils import generate_int_id as generate_id
 
 
 def in_two_months(start=None):
@@ -36,12 +38,12 @@ class Entitlement(db.Model):
     __tablename__ = 'candlepin_entitlement'
 
     #: The ID for the entitlement
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     #: The ID of the customer this entitlement is associated with.
     customer_id = db.Column(
         db.Integer,
-        db.ForeignKey('candlepin_customer._id', ondelete='CASCADE'),
+        db.ForeignKey('candlepin_customer.uuid', ondelete='CASCADE'),
         nullable=False
     )
 
@@ -49,7 +51,7 @@ class Entitlement(db.Model):
     #: if any one particular product in particular.
     product_id = db.Column(
         db.Integer,
-        db.ForeignKey('candlepin_product._id', ondelete='CASCADE'),
+        db.ForeignKey('candlepin_product.uuid', ondelete='CASCADE'),
         nullable=True
     )
 
@@ -76,12 +78,10 @@ class Entitlement(db.Model):
     def __init__(self, *args, **kwargs):
         super(Entitlement, self).__init__(*args, **kwargs)
 
-        # pylint: disable=no-member
-        _id = (int)(uuid4().int / 2**97)
+        uuid = generate_id()
 
-        if db.session.query(Entitlement).get(_id) is not None:
-            while db.session.query(Entitlement).get(_id) is not None:
-                # pylint: disable=no-member
-                _id = (int)(uuid4().int / 2**97)
+        if db.session.query(Entitlement).get(uuid) is not None:
+            while db.session.query(Entitlement).get(uuid) is not None:
+                uuid = generate_id()
 
-        self._id = _id
+        self.uuid = uuid

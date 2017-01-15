@@ -1,9 +1,8 @@
 """
     .. TODO:: A module docstring.
 """
-from uuid import uuid4
-
 from piko.db import db
+from piko.utils import generate_hex_id as generate_id
 
 
 class Session(db.Model):
@@ -23,7 +22,7 @@ class Session(db.Model):
     #: for getting to an actual person logging in -- using an account.
     account_id = db.Column(
         db.Integer,
-        db.ForeignKey('account._id', ondelete="CASCADE"),
+        db.ForeignKey('account.uuid', ondelete="CASCADE"),
         nullable=True
     )
 
@@ -31,14 +30,30 @@ class Session(db.Model):
     #: account.
     person_id = db.Column(
         db.Integer,
-        db.ForeignKey('person._id', ondelete="CASCADE"),
+        db.ForeignKey('person.uuid', ondelete="CASCADE"),
         nullable=True
     )
+
+    account = db.relationship('Account')
+    person = db.relationship('Person')
 
     redirect = db.Column(db.String(256))
 
     #: The expiry date and time
     expires = db.Column(db.DateTime, default=None)
+
+    def __init__(self, *args, **kwargs):
+        super(Session, self).__init__(*args, **kwargs)
+
+        uuid = generate_id()
+
+        query = db.session.query
+
+        if query(Session).filter_by(uuid=uuid).first() is not None:
+            while query(Session).filter_by(uuid=uuid).first() is not None:
+                uuid = generate_id()
+
+        self.uuid = uuid
 
     def associate_account_id(self, account_id):
         """
@@ -72,15 +87,10 @@ class Session(db.Model):
 
         db.session.commit()
 
-    def __init__(self, *args, **kwargs):
-        super(Session, self).__init__(*args, **kwargs)
+    def set_redirect(self, redirect):
+        """
+            Set the redirect for this session.
+        """
+        self.redirect = redirect
 
-        uuid = uuid4().__str__()
-
-        query = db.session.query
-
-        if query(Session).filter_by(uuid=uuid).first() is not None:
-            while query(Session).filter_by(uuid=uuid).first() is not None:
-                uuid = uuid4().__str__()
-
-        self.uuid = uuid
+        db.session.commit()

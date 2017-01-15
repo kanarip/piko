@@ -19,7 +19,7 @@ class Product(Translatable, db.Model):
 
     locale = "en"
 
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(64), nullable=False)
     bestprice = db.Column(db.Float, nullable=True)
     signup_enabled = db.Column(db.Boolean, default=False)

@@ -7,11 +7,11 @@
     :py:class:`piko.db.model.Person`.
 """
 import datetime
-import uuid
 
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from piko.db import db
+from piko.utils import generate_int_id as generate_id
 
 from .accountlogin import AccountLogin
 from .change import Change
@@ -31,7 +31,7 @@ class Account(db.Model):
     __tablename__ = "account"
 
     #: A generated unique integer ID.
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     #: The account name. Can be something like 'kanarip' for the screen name of
     #: a Twitter account, or 'Jeroen van Meeuwen' for a Facebook/Google
@@ -49,15 +49,15 @@ class Account(db.Model):
     #: Domain ID
     domain_id = db.Column(
         db.Integer,
-        db.ForeignKey('asp_domain._id', ondelete='CASCADE'),
+        db.ForeignKey('asp_domain.uuid', ondelete='CASCADE'),
         nullable=True
     )
 
     #: The human being, if any, that this account belongs to. Links to
-    #: :py:attr:`piko.db.model.Person._id`
+    #: :py:class:`Person <piko.db.model.Person>`
     person_id = db.Column(
         db.Integer,
-        db.ForeignKey('person._id', ondelete='CASCADE'),
+        db.ForeignKey('person.uuid', ondelete='CASCADE'),
         nullable=True
     )
 
@@ -67,7 +67,7 @@ class Account(db.Model):
     #: The group, if any, that this account belongs to.
     group_id = db.Column(
         db.Integer,
-        db.ForeignKey('group._id', ondelete='CASCADE'),
+        db.ForeignKey('group.uuid', ondelete='CASCADE'),
         nullable=True
     )
 
@@ -89,7 +89,7 @@ class Account(db.Model):
     #: A parent account ID
     parent_id = db.Column(
         db.Integer,
-        db.ForeignKey('account._id'),
+        db.ForeignKey('account.uuid'),
         nullable=True
     )
 
@@ -106,14 +106,13 @@ class Account(db.Model):
     def __init__(self, *args, **kwargs):
         super(Account, self).__init__(*args, **kwargs)
 
-        # pylint: disable=no-member
-        _id = (int)(uuid.uuid4().int / 2**97)
+        uuid = generate_id()
 
-        if db.session.query(Account).get(_id) is not None:
-            while db.session.query(Account).get(_id) is not None:
-                _id = (int)(uuid.uuid4().int / 2**97)
+        if db.session.query(Account).get(uuid) is not None:
+            while db.session.query(Account).get(uuid) is not None:
+                uuid = generate_id()
 
-        self._id = _id
+        self.uuid = uuid
 
     @hybrid_property
     # pylint: disable=no-self-use
@@ -152,21 +151,21 @@ class Account(db.Model):
 
         factors.extend(
             db.session.query(HOTPToken).filter_by(
-                account_id=self._id,
+                account_id=self.uuid,
                 confirmed=True
             ).all()
         )
 
         factors.extend(
             db.session.query(TANToken).filter_by(
-                account_id=self._id,
+                account_id=self.uuid,
                 confirmed=True
             ).all()
         )
 
         factors.extend(
             db.session.query(TOTPToken).filter_by(
-                account_id=self._id,
+                account_id=self.uuid,
                 confirmed=True
             ).all()
         )
@@ -191,10 +190,11 @@ class Account(db.Model):
     @name.setter
     def name(self, value):
         change = Change(
-            self.__class__.__name__,
-            self._id,
-            self._name,
-            value
+            object_name=self.__class__.__name__,
+            object_id=self.uuid,
+            attribute_name='_name',
+            value_from=self._name,
+            value_to=value
         )
 
         db.session.add(change)
@@ -227,7 +227,7 @@ class Account(db.Model):
             Return a dictionary representation of the account data.
         """
         return {
-            "id": self._id,
+            "id": self.uuid,
             "name": self._name,
             "type_name": self.type_name,
             "created": self.created,

@@ -1,11 +1,10 @@
 """
     .. TODO:: A module docstring.
 """
-import uuid
-
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from piko.db import db
+from piko.utils import generate_int_id as generate_id
 
 from piko.bcrypt import check_password_hash
 from piko.bcrypt import generate_password_hash
@@ -23,9 +22,9 @@ class Person(db.Model):
     __tablename__ = 'person'
 
     #: A unique integer ID.
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
-    #: The name for this account.
+    #: The name for this person.
     name = db.Column(db.String(255), nullable=False)
 
     #: This should be considered a token as well, but is most commonly
@@ -48,15 +47,15 @@ class Person(db.Model):
     def __init__(self, *args, **kwargs):
         super(Person, self).__init__(*args, **kwargs)
 
-        # pylint: disable=no-member
-        _id = (int)(uuid.uuid4().int / 2**97)
+        if 'uuid' in kwargs:
+            uuid = kwargs['uuid']
+        else:
+            uuid = generate_id()
 
-        if db.session.query(Person).get(_id) is not None:
-            while db.session.query(Person).get(_id) is not None:
-                # pylint: disable=no-member
-                _id = (int)(uuid.uuid4().int / 2**97)
+        while db.session.query(Person).get(uuid) is not None:
+            uuid = generate_id()
 
-        self._id = _id
+        self.uuid = uuid
 
     @hybrid_property
     def accounts(self):
@@ -93,10 +92,11 @@ class Person(db.Model):
         self.password_hash = generate_password_hash(password)
 
         change = Change(
-            self.__class__.__name__,
-            self._id,
-            '****',
-            '****'
+            object_name=self.__class__.__name__,
+            object_id=self.uuid,
+            attribute_name='password',
+            value_from='****',
+            value_to='****'
         )
 
         db.session.add(change)
@@ -122,21 +122,21 @@ class Person(db.Model):
 
         factors.extend(
             db.session.query(HOTPToken).filter_by(
-                person_id=self._id,
+                person_id=self.uuid,
                 confirmed=True
             ).all()
         )
 
         factors.extend(
             db.session.query(TANToken).filter_by(
-                person_id=self._id,
+                person_id=self.uuid,
                 confirmed=True
             ).all()
         )
 
         factors.extend(
             db.session.query(TOTPToken).filter_by(
-                person_id=self._id,
+                person_id=self.uuid,
                 confirmed=True
             ).all()
         )
@@ -153,7 +153,7 @@ class Person(db.Model):
 
             from .accountlogin import AccountLogin
 
-            db.session.add(AccountLogin(account_id=self._id, success=result))
+            db.session.add(AccountLogin(person_id=self.uuid, success=result))
             db.session.commit()
 
             return result
@@ -171,7 +171,7 @@ class Person(db.Model):
         """
         from .account import Account
 
-        return db.session.query(Account).filter_by(person_id=self._id)
+        return db.session.query(Account).filter_by(person_id=self.uuid)
 
     def to_dict(self):
         """

@@ -16,7 +16,7 @@ class KBArticle(Translatable, db.Model):
     locale = "en"
 
     _id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('account._id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('account.uuid'))
 
     @hybrid_property
     def votes(self):
@@ -42,7 +42,7 @@ class KBArticle(Translatable, db.Model):
 class KBArticleLocale(translation_base(KBArticle)):
     __tablename__ = 'kb_article_i18n'
 
-    translator_id = db.Column(db.Integer, db.ForeignKey('account._id'))
+    translator_id = db.Column(db.Integer, db.ForeignKey('account.uuid'))
     title = db.Column(db.Unicode(120), nullable=False)
     href = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Unicode(512), nullable=False)

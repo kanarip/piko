@@ -3,9 +3,9 @@
     ===============================
 """
 from datetime import datetime
-from uuid import uuid4
 
 from piko.db import db
+from piko.utils import generate_int_id as generate_id
 
 
 # pylint: disable=too-few-public-methods
@@ -15,17 +15,17 @@ class Subscription(db.Model):
     """
     __tablename__ = 'candlepin_subscription'
 
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     entitlement_id = db.Column(
         db.Integer,
-        db.ForeignKey('candlepin_entitlement._id'),
+        db.ForeignKey('candlepin_entitlement.uuid'),
         nullable=False
     )
 
     system_id = db.Column(
-        db.Integer,
-        db.ForeignKey('candlepin_system._id'),
+        db.String(36),
+        db.ForeignKey('candlepin_system.uuid'),
         nullable=False
     )
 
@@ -37,12 +37,10 @@ class Subscription(db.Model):
     def __init__(self, *args, **kwargs):
         super(Subscription, self).__init__(*args, **kwargs)
 
-        # pylint: disable=no-member
-        _id = (int)(uuid4().int / 2**97)
+        uuid = generate_id()
 
-        if db.session.query(Subscription).get(_id) is not None:
-            while db.session.query(Subscription).get(_id) is not None:
-                # pylint: disable=no-member
-                _id = (int)(uuid4().int / 2**97)
+        if db.session.query(Subscription).get(uuid) is not None:
+            while db.session.query(Subscription).get(uuid) is not None:
+                uuid = generate_id()
 
-        self._id = _id
+        self.uuid = uuid

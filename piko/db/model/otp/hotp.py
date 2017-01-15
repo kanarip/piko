@@ -3,6 +3,7 @@ import urllib
 import uuid
 
 from piko.db import db
+from piko.utils import generate_int_id as generate_id
 
 from .token import OTPToken
 
@@ -17,13 +18,13 @@ class HOTPToken(OTPToken, db.Model):
     def __init__(self, *args, **kwargs):
         super(HOTPToken, self).__init__(*args, **kwargs)
 
-        _id = (int)(uuid.uuid4().int / 2**97)
+        uuid = generate_id()
 
-        if db.session.query(HOTPToken).get(_id) is not None:
-            while db.session.query(HOTPToken).get(_id) is not None:
-                _id = (int)(uuid.uuid4().int / 2**97)
+        if db.session.query(HOTPToken).get(uuid) is not None:
+            while db.session.query(HOTPToken).get(uuid) is not None:
+                uuid = generate_id()
 
-        self.id = _id
+        self.uuid = uuid
 
     def validate_token(self, token):
         auth = otpauth.OtpAuth(self.secret)

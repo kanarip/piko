@@ -12,7 +12,7 @@ class AccountLogin(db.Model):
     """
     __tablename__ = 'account_login'
 
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     timestamp = db.Column(
         db.DateTime,
@@ -24,10 +24,19 @@ class AccountLogin(db.Model):
 
     account_id = db.Column(
         db.Integer,
-        db.ForeignKey('account._id', ondelete="CASCADE")
+        db.ForeignKey('account.uuid', ondelete="CASCADE"),
+        nullable=True
     )
 
     account = db.relationship('Account')
+
+    person_id = db.Column(
+        db.Integer,
+        db.ForeignKey('person.uuid', ondelete="CASCADE"),
+        nullable=True
+    )
+
+    person = db.relationship('Person')
 
     def log_success(self, account_id):
         """

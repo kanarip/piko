@@ -1,7 +1,13 @@
+"""
+    piko.db.model.TANToken
+    ======================
+
+    Temp. Authz. Number
+"""
 import datetime
-import uuid
 
 from piko.db import db
+from piko.utils import generate_int_id as generate_id
 
 from .token import OTPToken
 
@@ -20,13 +26,12 @@ class TANToken(OTPToken, db.Model):
     tan = db.Column(db.Integer, nullable=False, default=-1)
 
     def __init__(self, *args, **kwargs):
-        super(TOTPToken, self).__init__(*args, **kwargs)
+        super(TANToken, self).__init__(*args, **kwargs)
 
-        _id = (int)(uuid.uuid4().int / 2**97)
+        uuid = generate_id()
 
-        if db.session.query(TOTPToken).get(_id) is not None:
-            while db.session.query(TOTPToken).get(_id) is not None:
-                _id = (int)(uuid.uuid4().int / 2**97)
+        if db.session.query(TANToken).get(uuid) is not None:
+            while db.session.query(TANToken).get(uuid) is not None:
+                uuid = generate_id()
 
-        self.id = _id
-
+        self.uuid = uuid

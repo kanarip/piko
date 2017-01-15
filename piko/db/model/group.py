@@ -1,9 +1,8 @@
 """
     .. TODO:: A module docstring.
 """
-import uuid
-
 from piko.db import db
+from piko.utils import generate_int_id as generate_id
 
 
 # pylint: disable=too-few-public-methods
@@ -23,7 +22,7 @@ class Group(db.Model):
     __tablename__ = 'group'
 
     #: An automatically generated unique integer ID
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     _name = db.Column(db.String(255), nullable=False)
 
@@ -45,14 +44,13 @@ class Group(db.Model):
         """
         super(Group, self).__init__(*args, **kwargs)
 
-        # pylint: disable=no-member
-        _id = (int)(uuid.uuid4().int / 2**97)
+        uuid = generate_id()
 
-        if db.session.query(Group).get(_id) is not None:
-            while db.session.query(Group).get(_id) is not None:
-                _id = (int)(uuid.uuid4().int / 2**97)
+        if db.session.query(Group).get(uuid) is not None:
+            while db.session.query(Group).get(uuid) is not None:
+                uuid = generate_id()
 
-        self._id = _id
+        self.uuid = uuid
 
     @property
     def name(self):

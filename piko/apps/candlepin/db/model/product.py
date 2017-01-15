@@ -13,7 +13,7 @@ class Product(db.Model):
     __tablename__ = 'candlepin_product'
 
     #: The unique ID for this product
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     #: A machine readable key
     key = db.Column(db.String(32), index=True)
@@ -26,7 +26,7 @@ class Product(db.Model):
     #: available as well.
     parent_id = db.Column(
         db.Integer,
-        db.ForeignKey('candlepin_product._id', ondelete='CASCADE'),
+        db.ForeignKey('candlepin_product.uuid', ondelete='CASCADE'),
         nullable=True
     )
 

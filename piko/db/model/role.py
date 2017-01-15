@@ -12,7 +12,7 @@ class Role(db.Model):
 
     __tablename__ = "role"
 
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(16), nullable=False)
     name = db.Column(db.String(64), nullable=False)
 

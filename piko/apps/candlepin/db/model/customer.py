@@ -3,9 +3,9 @@
     ===========================
 """
 from datetime import datetime
-from uuid import uuid4
 
 from piko.db import db
+from piko.utils import generate_int_id as generate_id
 
 
 # pylint: disable=too-few-public-methods
@@ -17,7 +17,7 @@ class Customer(db.Model):
 
     #: The unique ID for the customer. Note that this ID cannot be predictable,
     #: and is generated.
-    _id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     #: A name for the customer. Think along the lines of *Example, Inc.*.
     name = db.Column(db.String(128))
@@ -46,12 +46,10 @@ class Customer(db.Model):
         """
         super(Customer, self).__init__(*args, **kwargs)
 
-        # pylint: disable=no-member
-        _id = (int)(uuid4().int / 2**97)
+        uuid = generate_id()
 
-        if db.session.query(Customer).get(_id) is not None:
-            while db.session.query(Customer).get(_id) is not None:
-                # pylint: disable=no-member
-                _id = (int)(uuid4().int / 2**97)
+        if db.session.query(Customer).get(uuid) is not None:
+            while db.session.query(Customer).get(uuid) is not None:
+                uuid = generate_id()
 
-        self._id = _id
+        self.uuid = uuid
