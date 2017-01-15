@@ -16,6 +16,7 @@ template_path = os.path.abspath(
     )
 )
 
+
 def register(apps):
     """
         Register CAS as a Flask application.
@@ -31,13 +32,14 @@ def register(apps):
 
     apps['/cas'] = app
 
-    api_app = App('piko.api.v1.cas')
+    api_app = App('piko.cas')
     api_app.debug = True
     register_api_routes(api_app)
 
     apps['/api/v1/cas'] = api_app
 
     return apps
+
 
 def register_blueprint(app):
     """
@@ -68,6 +70,7 @@ def register_blueprint(app):
 
     app.register_blueprint(blueprint)
 
+
 def register_routes(app):
     """
         Register routes for the UI.
@@ -78,6 +81,7 @@ def register_routes(app):
             Dummy index
         """
         return app.abort(404)
+
 
 def register_api_routes(app):
     """
