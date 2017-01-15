@@ -1,28 +1,52 @@
+"""
+    Configuration for piko.
+"""
 import os
+
 
 def basepath():
     """
         return the base path.
     """
     return os.path.abspath(
-            os.path.join(
-                    os.path.dirname(__file__),
-                    '..'
-                )
+        os.path.join(
+            os.path.dirname(__file__),
+            '..'
         )
+    )
 
-ASSETS_DEBUG = True
+##
+## DO NOT EDIT THESE
+##
+ASSET_DEBUG = False
+DEBUG = False
+DEFAULT_THEME = 'default'
+ENVIRONMENT = "production"
+MINIFY_PAGE = True
+SECRET_KEY = os.urandom(24)
+SQLALCHEMY_DATABASE_URI = 'sqlite:///%s/piko.db' % (
+    os.path.join(basepath(), 'tmp')
+)
+
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+THEME_PATHS = 'piko/themes'
+
+##
+## EDIT THESE, WATCH FOR THE STOP SIGN
+##
+
+#ASSETS_DEBUG = True
 
 CACHE_DIR = os.path.join(basepath(), 'tmp', 'cache')
 CACHE_TYPE = 'filesystem'
 
-CELERY_ACCEPT_CONTENT = [ 'pickle', 'msgpack' ]
+CELERY_ACCEPT_CONTENT = ['pickle', 'msgpack']
 #CELERY_BROKER_URL = 'redis://172.17.42.1:6379'
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_IMPORTS = (
-        'piko.bcrypt',
-        'piko.ldap',
-    )
+    'piko.bcrypt',
+    'piko.ldap',
+)
 
 #CELERY_RESULT_BACKEND = 'redis://172.17.42.1:6379'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
@@ -31,22 +55,26 @@ CELERY_TASK_SERIALIZER = 'msgpack'
 
 DEBUG = True
 
-# Whatever theme you ship yourself, or 'default' or 'demo'
-DEFAULT_THEME = 'default'
 #DEFAULT_THEME = 'demo'
 
+ENVIRONMENT = 'development'
+
+# Fake the country this connection seems to originate from.
 #FAKE_COUNTRY = 'NL'
+#FAKE_COUNTRY = 'GB'
 
 LANGUAGES = ['en', 'nl']
 
-#MINIFY_PAGE = True
+#OPENEXCHANGERATES_API_KEY = 'getyourown'
 
-SECRET_KEY = os.urandom(24)
+#SECRET_KEY = os.urandom(24)
 
 SQLALCHEMY_DATABASE_URI = 'mysql://piko:piko@127.0.0.1/piko'
-#SQLALCHEMY_DATABASE_URI = 'sqlite:///%s/piko.db' % (os.path.join(basepath(), 'tmp'))
-SQLALCHEMY_TRACK_MODIFICATIONS = True
-SQLALCHEMY_ECHO = True
+#SQLALCHEMY_TRACK_MODIFICATIONS = True
 
-THEME_PATHS = 'piko/themes'
+##
+## THIS IS A POOR REPRESENTATION OF A STOP SIGN
+##
+MINIFY_PAGE = (ENVIRONMENT != "development" or not DEBUG)
 
+SQLALCHEMY_ECHO = (ENVIRONMENT == "development" and DEBUG)
