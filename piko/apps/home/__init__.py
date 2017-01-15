@@ -1,6 +1,10 @@
-import gevent
+"""
+    The main piko application homepage.
+"""
 import json
 import os
+
+import gevent
 
 from flask import flash
 from flask import jsonify
@@ -28,12 +32,14 @@ from piko.l10n import get_babel_locale
 
 from piko.translate import _
 
+# pylint: disable=invalid-name
 template_path = os.path.abspath(
-        os.path.join(
-                os.path.dirname(__file__),
-                'templates'
-            )
+    os.path.join(
+        os.path.dirname(__file__),
+        'templates'
     )
+)
+
 
 def register(apps):
     """
@@ -44,7 +50,7 @@ def register(apps):
         :returns:       A list of :py:class:`piko.App` applications with this
                         application included.
     """
-    app = App('piko', template_folder = template_path)
+    app = App('piko', template_folder=template_path)
     app.debug = True
     register_routes(app)
 
@@ -52,33 +58,41 @@ def register(apps):
 
     return apps
 
+
 def register_blueprint(app):
     """
         Register home as a Flask blueprint.
     """
     from piko import Blueprint
-    blueprint = Blueprint(app, 'piko', __name__)
+    blueprint = Blueprint(
+        app,
+        'piko',
+        __name__,
+        url_prefix=''
+    )
 
     register_routes(blueprint)
 
     app.register_blueprint(blueprint)
 
     blueprint = Blueprint(
-            app,
-            'piko.api.v1',
-            __name__,
-            url_prefix='/api/v1'
-        )
+        app,
+        'piko.api.v1',
+        __name__,
+        url_prefix='/api/v1'
+    )
 
     register_api_routes(blueprint)
 
     app.register_blueprint(blueprint)
+
 
 def register_routes(app):
     """
         Register routes with the main Flask application.
     """
     @app.route('/')
+    # pylint: disable=unused-variable
     def index():
         """
             Nothing much to see here.
@@ -86,31 +100,53 @@ def register_routes(app):
         from piko.db import db
         from piko.db.model import Product
 
-        products = db.session.query(Product).options(db.joinedload(Product.translations[get_babel_locale()])).filter_by(signup_enabled=True).all()
+        products = db.session.query(Product).options(
+            db.joinedload(
+                Product.translations[get_babel_locale()]
+            )
+        ).filter_by(signup_enabled=True).all()
 
         return app.render_template(
-                'index.html',
-                products = products
-            )
+            'index.html',
+            products=products
+        )
 
     @app.route('/login')
+    # pylint: disable=unused-variable
     def login():
         """
             Renders the login overview with links to enabled login
             mechanisms.
         """
+        _redirect = request.args.get('next') or request.referrer
+
+        _session = current_session()
+
+        if _session is not None:
+            _session.set_redirect(_redirect)
+
         return app.render_template('login/index.html')
 
     @app.route('/login/complete')
+    # pylint: disable=unused-variable
     def login_complete():
+        """
+            A login sequence is completed.
+        """
         from piko.db import db
         from piko.db.model import Person
 
         _session = current_session()
-        person = db.session.query(Person).get(_session.person_id)
+
+        if _session.person_id is None:
+            return app.abort(403)
+
+        person = db.session.query(Person).filter_by(
+            uuid=_session.person_id
+        ).first()
 
         if person is None:
-            return app.abort(500, "Invalid Person.")
+            return app.abort(500, _("Invalid Person."))
 
         task_id = _session.transactions[0].task_id
 
@@ -122,8 +158,9 @@ def register_routes(app):
         if task is None:
             return app.abort(403, "Access Denied")
 
-        if task.info == True:
-            session['person_id'] = person.id
+        if task.info is True:
+            # We need not to.
+            # session['person_id'] = person.uuid
 
             if _session.redirect:
                 _redirect = redirect(_session.redirect)
@@ -139,49 +176,62 @@ def register_routes(app):
 
             return app.abort(500)
 
-    @app.route('/login/email', methods = ['GET', 'POST'])
+    @app.route('/login/email', methods=['GET', 'POST'])
+    # pylint: disable=unused-variable
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
     def login_email():
+        """
+            Login with an email address and a password.
+
+            #.  Accepts GET and POST requests.
+
+            #.  Continues an existing login sequence.
+
+            #.  Verifies the user is not already logged in, or
+                redirects to profile (with a flash).
+        """
         from piko.forms import LoginEmailForm
 
         _session = current_session()
 
         # Already logged in.
-        if _session.person_id == session.get('person_id', False):
-            if _session.id == session.get('uuid'):
-                return redirect(url_for('piko.profile'))
+        if _session.person_id is not None:
+            if _session.person_id == session.get('person_id', False):
+                if _session.uuid == session.get('uuid'):
+                    flash(_("Already logged in."), 'danger')
+                    return redirect(url_for('piko.profile'))
 
         if request.method == 'GET':
             uuid, _redirect = login_sequence_start()
 
-            form = LoginEmailForm(request.form, uuid = uuid)
+            form = LoginEmailForm(request.form, uuid=uuid)
 
-            return app.render_template('login/email.html', form = form)
+            return app.render_template('login/email.html', form=form)
 
         elif request.method == 'POST':
             uuid, _redirect = login_sequence_retrieve()
 
             if not request.form.get('uuid') == uuid:
-                return _redirect or app.abort(500)
+                return app.abort(403, _("Invalid submission."))
 
-            form = LoginEmailForm(request.form, uuid = uuid)
+            form = LoginEmailForm(request.form, uuid=uuid)
 
             if form.validate():
                 from piko.db import db
                 from piko.db.model import Account
 
-                account = db.session.query(
-                        Account
-                    ).filter_by(
-                            _name=form.email_address.data,
-                            type_name='email'
-                        ).first()
+                account = db.session.query(Account).filter_by(
+                    _name=form.email_address.data,
+                    type_name='email'
+                ).first()
 
                 # No such account could be found.
                 if account is None:
                     flash(_("Login failed."), 'danger')
                     return login_sequence_complete(False)
 
-                login_sequence_associate_account(account.id)
+                login_sequence_associate_account(account.uuid)
 
                 # This account is not a personal account.
                 if account.person_id is None:
@@ -198,10 +248,10 @@ def register_routes(app):
                 # of progress.
                 transaction, uuid = login_sequence_continue()
 
-                result = account.person.verify_password(
-                        form.password.data,
-                        transaction=transaction
-                    )
+                account.person.verify_password(
+                    form.password.data,
+                    transaction=transaction
+                )
 
                 if len(account.second_factors) > 0:
                     return redirect(url_for('piko.login_otp'))
@@ -214,6 +264,7 @@ def register_routes(app):
 
             else:
                 flash(_("Login failed"), 'danger')
+                return redirect(url_for('piko.login'))
 
             return app.render_template('login/email.html', form=form)
 
@@ -222,8 +273,16 @@ def register_routes(app):
 
         return redirect(url_for('piko.login'))
 
-    @app.route('/login/otp', methods = [ 'GET', 'POST' ])
+    @app.route('/login/otp', methods=['GET', 'POST'])
+    # pylint: disable=unused-variable
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-statements
     def login_otp():
+        """
+            Continue a login sequence by requesting an OTP be entered in to
+            a form.
+        """
         from piko.forms import LoginOTPForm
 
         from piko.db import db
@@ -231,14 +290,17 @@ def register_routes(app):
 
         _session = current_session()
 
-        if _session.person_id == session.get('person_id', None):
-            if _session.id == session.get('uuid'):
-                return redirect(url_for('piko.index'))
+        if _session.person_id is None:
+            return redirect(url_for('piko.login'))
+
+        if _session.person_id == session.get('person_id', False):
+            if _session.uuid == session.get('uuid'):
+                return redirect(url_for('piko.login'))
 
         form = LoginOTPForm(
-                request.form,
-                uuid = _session.transactions[1].transaction_id
-            )
+            request.form,
+            uuid=_session.transactions[1].transaction_id
+        )
 
         if request.method == 'GET':
             return app.render_template('login/otp.html', form=form)
@@ -255,11 +317,16 @@ def register_routes(app):
 
             if form.validate():
                 person = db.session.query(
-                        Person
-                    ).get(_session.person_id)
+                    Person
+                ).get(_session.person_id)
 
-                if person == None:
-                    app.logger.error("no person for _session.person_id: %r" % (_session.person_id))
+                if person is None:
+                    app.logger.error(
+                        "no person for _session.person_id: %r" % (
+                            _session.person_id
+                        )
+                    )
+
                     return app.abort(500)
                 else:
                     app.logger.info("person ID %r" % (_session.person_id))
@@ -283,10 +350,16 @@ def register_routes(app):
                     task_id = _session.transactions[0].task_id
 
                     if not task_id:
-                        app.logger.info("setting session['person_id'] to %r" % (person.id))
+                        app.logger.info(
+                            "setting session['person_id'] to %r" % (person.id)
+                        )
 
                         session['person_id'] = person.id
-                        app.logger.info("using session's redirect %r" % (_session.redirect))
+
+                        app.logger.info(
+                            "using session's redirect %r" % (_session.redirect)
+                        )
+
                         _redirect = redirect(_session.redirect)
                         _session.redirect = None
 
@@ -298,7 +371,7 @@ def register_routes(app):
 
                     task.wait()
 
-                    if task.info == True:
+                    if task.info is True:
                         session['person_id'] = person.id
 
                         if _session.redirect:
@@ -323,58 +396,71 @@ def register_routes(app):
 
                 login_sequence_complete(False)
 
-                return app.render_template('login/otp.html', form = form)
+                return app.render_template('login/otp.html', form=form)
         else:
             return app.abort(405)
 
     @app.route('/login/verify/<string:task_id>')
+    # pylint: disable=unused-variable
     def login_verify(task_id):
+        """
+            Verify the login
+        """
         app.logger.info("Verifying status of task ID %s" % (task_id))
 
         def event_stream():
+            """
+                This is used to continuously track progress.
+            """
             task = check_password_hash.AsyncResult(task_id)
 
             if task is None:
                 yield 'data: %s\n\n' % (
-                        json.dumps(
-                                { "result": False }
-                            )
-                    )
+                    json.dumps({"result": False})
+                )
 
             while True:
                 gevent.sleep(1)
 
                 if task.state == "PENDING":
                     yield 'data: %s\n\n' % (
-                            json.dumps(
-                                    { "result": None }
-                                )
-                        )
+                        json.dumps({"result": None})
+                    )
 
                 else:
                     yield 'data: %s\n\n' % (
-                            json.dumps(
-                                    { "result": True }
-                                )
-                        )
+                        json.dumps({"result": True})
+                    )
 
                     break
 
         return Response(
-                event_stream(),
-                mimetype='text/event-stream'
-            )
+            event_stream(),
+            mimetype='text/event-stream'
+        )
 
     @app.route('/login/wait')
+    # pylint: disable=unused-variable
     def login_wait():
+        """
+            This page is used to let the user wait for the login
+            verification.
+        """
         from piko.db import db
         from piko.db.model import Person
 
         _session = current_session()
+
+        if _session.person_id is None:
+            return app.abort(403)
+
         person = db.session.query(Person).get(_session.person_id)
 
         if person is None:
-            app.logger.error("no person for _session.person_id: %r" % (_session.person_id))
+            app.logger.error(
+                "no person for _session.person_id: %r" % (_session.person_id)
+            )
+
             return app.abort(500)
         else:
             app.logger.info("person ID %r" % (_session.person_id))
@@ -385,26 +471,78 @@ def register_routes(app):
 
     @login_required
     @app.route('/logout')
+    # pylint: disable=unused-variable
     def logout():
-        return app.render_template('index.html')
+        """
+            Logout a user.
+
+            .. TODO:: Doesn't seem to actually do too much.
+        """
+
+        from piko.db import db
+
+        _session = current_session()
+
+        db.session.delete(_session)
+
+        session.clear()
+
+        db.session.commit()
+
+        flash(_("You are now logged out."))
+
+        return redirect(url_for('piko.logout_ok'))
+
+    @app.route('/logout/ok')
+    # pylint: disable=unused-variable
+    def logout_ok():
+        """
+            Confirm the user is logged out.
+        """
+        return app.render_template('logout.html')
 
     @login_required
     @app.route('/profile')
+    # pylint: disable=unused-variable
     def profile():
+        """
+            Render a user's profile.
+        """
         return app.render_template('index.html')
 
+
 def register_api_routes(app):
-    @app.route('/whoami', methods = [ 'POST' ])
+    """
+        Register the routes for the API.
+    """
+    @app.route('/whoami', methods=['POST'])
+    # pylint: disable=unused-variable
     def whoami():
+        """
+            Returns information about who the client user is.
+
+            .. TODO::
+
+                This should actually do the thing for the actual user.
+        """
         return jsonify({'result': True, 'username': 'john.doe@example.org'})
 
-    @app.route('/account-info', methods = [ 'POST' ])
+    @app.route('/account-info', methods=['POST'])
+    # pylint: disable=unused-variable
     def account_info():
+        """
+            Let the user know just about everything about their account that
+            is somehow valuable information.
+        """
         from piko.db import db
         from piko.db.model import Account
 
         data = json.loads(request.data)
-        account = db.session.query(Account).filter_by(_name=data["username"]).first()
+
+        account = db.session.query(Account).filter_by(
+            _name=data["username"]
+        ).first()
+
         if account is None:
             return app.abort(404)
 
@@ -412,5 +550,4 @@ def register_api_routes(app):
         if account.person is not None:
             person = account.person.to_dict()
 
-        return jsonify({'result': True, 'account': account.to_dict(), 'person': person})
-
+        return jsonify(result=True, account=account.to_dict(), person=person)
