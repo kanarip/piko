@@ -5,7 +5,7 @@
 import datetime
 import os
 import time
-import uuid
+from uuid import uuid4
 
 from flask import abort
 from flask import g
@@ -30,18 +30,24 @@ base_path = os.path.dirname(__file__)
 
 class App(Flask):
     """
-        An abstraction class for Flask, that loops-and-hooks everything.
+        An abstraction class for :py:class:`flask.Flask`, that loops-and-hooks
+        everything.
     """
 
     def __init__(self, *args, **kwargs):
+
+        # Initialize the :py:class:`~Flask` instance
         super(App, self).__init__(*args, **kwargs)
 
+        # Load system settings
         self.config.from_object('piko.settings')
 
+        # Load specified settings.
         if 'PIKO_SETTINGS' in os.environ:
             if os.path.isfile(os.environ['PIKO_SETTINGS']):
                 self.config.from_envvar('PIKO_SETTINGS')
 
+        # Set debug. Why? Good question.
         self.debug = self.config.get('DEBUG', False)
 
         # pylint: disable=E1101
@@ -85,7 +91,9 @@ class App(Flask):
     # pylint: disable=no-self-use
     def abort(self, code, message=None):
         """
-            Return a Flask Response via abort().
+            Return a :py:class:`flask.Flask`
+            :py:class:`flask.wrappers.Response` that ultimately is a
+            :py:class:`werkzeug.exceptions.Aborter` instance.
         """
         return abort(code, message)
 
@@ -95,6 +103,9 @@ class App(Flask):
             has not yet been sent out.
         """
         response.headers['Server'] = 'Joking/Surely 4.20'
+
+        if request.path.startswith('/static/'):
+            return response
 
         if self.config.get('ENVIRONMENT', 'production') == 'production':
             return response
@@ -137,7 +148,8 @@ class App(Flask):
             )
 
             _data = _data.replace('__L10N_LANGUAGE__', locale)
-            _data = _data.replace('__APP_NAME__', self.template_folder)
+            _data = _data.replace('__APP_NAME__', self.__class__.__name__)
+            _data = _data.replace('__USER_ID__', (str)(g.get('user', "None")))
 
             response.set_data(_data)
 
@@ -154,42 +166,31 @@ class App(Flask):
         """
             Executed before a request is handled.
         """
+        if request.path.startswith('/static/'):
+            return None
+
         g.before_request = time.time()
 
         g.environment = self.config.get('ENVIRONMENT', 'production')
         g.debug = self.config.get('DEBUG', False)
 
+        # This effectively initializes a session.
         if 'uuid' not in session:
-            session['uuid'] = uuid.uuid4().hex
+            session['uuid'] = uuid4().hex
 
         if 'locale' in session:
             g.locale = session['locale']
 
-        if 'account_id' in session and not request.path.startswith('/static/'):
-
+        if session.get('person_id', False):
             from piko.db import db
-            from piko.db.model import Account
+            from piko.db.model import Person
+            uuid = session.get('person_id')
+            person = db.session.query(Person).filter_by(uuid=uuid).first()
 
-            try:
-                account = db.session.query(Account).get(session['account_id'])
-
-            # pylint: disable=broad-except
-            except Exception, errmsg:
-                db.session.rollback()
-                account = db.session.query(Account).get(session['account_id'])
-
-                import traceback
-                # pylint: disable=superfluous-parens
-                print("Exception: %s" % (errmsg))
-                print("%s" % (traceback.format_exc()))
-
-            if account is None:
-                session.clear()
-
-            else:
-                g.user = account.id
-                g.locale = account.locale
-                g.timezone = account.timezone
+            if person is not None:
+                g.user = person.uuid
+                g.locale = person.locale
+                g.timezone = person.timezone
 
         register_l10n(self)
 
