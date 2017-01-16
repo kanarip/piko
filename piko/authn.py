@@ -24,13 +24,20 @@
 
 import datetime
 
+from functools import wraps
+
 from flask import abort
 from flask import g
 from flask import redirect
 from flask import request
 from flask import session
 from flask import url_for
-from functools import wraps
+
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+from flask.ext.babel import get_locale as get_babel_locale
+from flask.ext.babel import get_timezone as get_babel_timezone
+
 
 def current_session():
     """
@@ -42,28 +49,49 @@ def current_session():
     from piko.db import db
     from piko.db.model import Session
 
-    _session = db.session.query(Session).filter_by(id=session.get('uuid', None)).first()
+    _session = db.session.query(Session).filter_by(
+        uuid=session.get('uuid', None)
+    ).first()
 
-    if _session == None:
-        db.session.add(Session(id=session.get('uuid')))
+    if _session is None:
+        _session = Session()
+        db.session.add(_session)
         db.session.commit()
-        _session = db.session.query(Session).filter_by(id=session.get('uuid', None)).first()
+
+    session['uuid'] = _session.uuid
 
     return _session
 
+
+# pylint: disable=invalid-name
 def login_required(f):
     """
         Decorator function for route controllers that require a login.
     """
-
     @wraps(f)
+    # pylint: disable=missing-docstring
     def decorated_function(*args, **kwargs):
-        if g.get('user', None) == None:
+        person_id = g.get('user', None)
+
+        if person_id is None:
+            person_id = session.get('person_id', None)
+
+        if person_id is None:
             return redirect(url_for('piko.login', next=request.url))
+
+        from piko.db import db
+        from piko.db.model import Person
+        person = db.session.query(Person).filter_by(uuid=person_id).first()
+
+        if person is None:
+            return redirect(url_for('piko.login', next=request.url))
+
+        g.user = person.uuid
 
         return f(*args, **kwargs)
 
     return decorated_function
+
 
 def login_sequence_account_get_or_create(type_name, remote_id, name):
     """
@@ -84,43 +112,53 @@ def login_sequence_account_get_or_create(type_name, remote_id, name):
 
     from piko.db import db
     from piko.db.model import Account
-    from piko.db.model import AccountLogin
 
-    account = db.session.query(Account).filter_by(remote_id=remote_id, type_name=type_name).first()
-    if account == None:
+    account = db.session.query(Account).filter_by(
+        remote_id=remote_id,
+        type_name=type_name
+    ).first()
+
+    if account is None:
         account = Account(
-                name        = name,
-                remote_id   = remote_id,
-                type_name   = type_name,
-                locale      = get_babel_locale().__str__(),
-                timezone    = get_babel_timezone().__str__()
-            )
+            name=name,
+            remote_id=remote_id,
+            type_name=type_name,
+            locale=get_babel_locale().__str__(),
+            timezone=get_babel_timezone().__str__()
+        )
 
         db.session.add(account)
         db.session.commit()
-        account = db.session.query(Account).filter_by(remote_id=remote_id, type_name=type_name).first()
+
+        account = db.session.query(Account).filter_by(
+            remote_id=remote_id,
+            type_name=type_name
+        ).first()
+
     else:
         account.name = name
 
         if len(account.second_factors) > 0:
             session['_flashes'] = []
 
-            login_sequence_associate_account(account.id)
+            login_sequence_associate_account(account.uuid)
 
+            # pylint: disable=unused-variable
             transaction, uuid = login_sequence_continue()
 
             return redirect(url_for('piko.login_otp'))
 
     _session = current_session()
 
-    _session.account_id = account.id
-    session['account_id'] = account.id
+    _session.account_id = account.uuid
+    session['account_id'] = account.uuid
 
     return login_sequence_complete(True)
 
-def login_sequence_associate_account(id):
+
+def login_sequence_associate_account(uuid):
     """
-        Associate an :py:attr:`piko.db.model.Account.id` with the
+        Associate an :py:attr:`piko.db.model.Account.uuid` with the
         current :py:attr:`piko.db.model.Session`, without disclosing
         the validity of the account to the visitor via, for example, a
         cookie value.
@@ -129,14 +167,13 @@ def login_sequence_associate_account(id):
         information about a user having attempted to login with an
         otherwise valid account on the server.
     """
-    from piko.db import db
-
     _session = current_session()
-    _session.associate_account_id(id)
+    _session.associate_account_id(uuid)
 
-def login_sequence_associate_person(id):
+
+def login_sequence_associate_person(uuid):
     """
-        Associate an :py:attr:`piko.db.model.Account.id` with the
+        Associate an :py:attr:`piko.db.model.Account.uuid` with the
         current :py:attr:`piko.db.model.Session`, without disclosing
         the validity of the account to the visitor via, for example, a
         cookie value.
@@ -145,10 +182,9 @@ def login_sequence_associate_person(id):
         information about a user having attempted to login with an
         otherwise valid account on the server.
     """
-    from piko.db import db
-
     _session = current_session()
-    _session.associate_person_id(id)
+    _session.associate_person_id(uuid)
+
 
 def login_sequence_complete(success):
     """
@@ -171,18 +207,6 @@ def login_sequence_complete(success):
 
     _session = current_session()
 
-    if len(_session.transactions) in range(1,3):
-        session.clear()
-        db.session.delete(_session)
-        db.session.commit()
-        return abort(500)
-
-    if _session.account_id is None and _session.person_id is None:
-        session.clear()
-        db.session.delete(_session)
-        db.session.commit()
-        return abort(500)
-
     # Reset all ongoing transactions regardless of success or failure.
     _session.reset_transactions()
 
@@ -194,11 +218,12 @@ def login_sequence_complete(success):
 
     # Store the record on the login attempt.
     db.session.add(
-            AccountLogin(
-                    account_id = _session.account_id,
-                    success = success
-                )
+        AccountLogin(
+            account_id=_session.account_id,
+            person_id=_session.person_id,
+            success=success
         )
+    )
 
     if not success:
         db.session.delete(_session)
@@ -208,20 +233,25 @@ def login_sequence_complete(success):
 
     db.session.commit()
 
+    session['account_id'] = _session.account_id
+    session['person_id'] = _session.person_id
+
     return redirect(_redirect)
+
 
 def login_sequence_continue():
     """
-        Mark the session with a second transaction, such as for a TOTP/HOTP/TAN sequence.
+        Mark the session with a second transaction, such as for a TOTP/HOTP/TAN
+        sequence.
 
-        Returns the transaction to associate the validation of the current credentials to,
-        which can be an asynchronous :py:class:`celery.Celery` task, for which we store
-        the task ID as part of the transaction.
+        Returns the transaction to associate the validation of the current
+        credentials to, which can be an asynchronous :py:class:`celery.Celery`
+        task, for which we store the task ID as part of the transaction.
 
         Also returns the uuid for the new form.
 
-        :returns:   A tuple of the :py:class:`piko.db.model.SessionTransaction` object
-                    for the entry event, and the :py:class:`uuid.UUID`.
+        :returns:   A tuple of the :py:class:`piko.db.model.SessionTransaction`
+                    object for the entry event, and the :py:class:`uuid.UUID`.
     """
 
     from piko.db import db
@@ -229,11 +259,14 @@ def login_sequence_continue():
 
     _session = current_session()
 
-    if not _session.account_id:
+    if not _session.account_id and not _session.person_id:
         return (None, abort(500))
 
     if len(_session.transactions) == 2:
-        return _session.transactions[0], _session.transactions[1].transaction_id
+        return (
+            _session.transactions[0],
+            _session.transactions[1].transaction_id
+        )
 
     _session.transactions.append(SessionTransaction())
 
@@ -241,11 +274,14 @@ def login_sequence_continue():
 
     return _session.transactions[0], _session.transactions[1].transaction_id
 
+
 def login_sequence_retrieve():
-    from piko.db import db
+    """
+        Retrieve the current login sequence.
+    """
     _session = current_session()
 
-    if _session.account_id:
+    if _session.account_id or _session.person_id:
         return (None, redirect(url_for('piko.profile')))
 
     if not len(_session.transactions) == 1:
@@ -253,24 +289,34 @@ def login_sequence_retrieve():
 
     return _session.transactions[0].transaction_id, _session.redirect
 
+
 def login_sequence_start():
     """
         Start a login sequence.
 
-        This function eliminates all :py:class:`piko.db.model.SessionTransaction` objects
-        currently associated with the :py:class:`piko.db.model.Session`, inserts a new
-        :py:class:`piko.db.model.SessionTransaction` and sets the redirect and expiry for
-        the login sequence.
+        This function eliminates all
+        :py:class:`piko.db.model.SessionTransaction` objects currently
+        associated with the :py:class:`piko.db.model.Session`, inserts a new
+        :py:class:`piko.db.model.SessionTransaction` and sets the redirect and
+        expiry for the login sequence.
     """
     from piko.db import db
     from piko.db.model import SessionTransaction
 
     _session = current_session()
     _session.reset_transactions()
-    _session.transactions = [ SessionTransaction() ]
-    _session.redirect = request.args.get('next') or request.referrer or url_for('piko.profile')
-    _session.expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
+    _session.transactions = [SessionTransaction()]
+
+    if request.args.get('next'):
+        _session.redirect = request.args.get('next')
+    elif request.referrer:
+        _session.redirect = request.referrer
+    else:
+        _session.redirect = url_for('piko.profile')
+
+    _session.expires = datetime.datetime.utcnow() + \
+        datetime.timedelta(seconds=30)
+
     db.session.commit()
 
     return _session.transactions[0].transaction_id, _session.redirect
-
