@@ -1,0 +1,6 @@
+#!/bin/bash
+
+/usr/bin/redis-server \
+    --port 6379 \
+    --daemonize no
+

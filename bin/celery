@@ -1,0 +1,6 @@
+#!/bin/bash
+
+celery worker \
+    -A piko.celery.celery \
+    --loglevel=DEBUG \
+    --autoscale=10,1
