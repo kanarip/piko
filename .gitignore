@@ -1,8 +1,10 @@
 *.pyc
 *.swp
+.coverage
 docs/build/
 piko/static/assets/
 piko/static/.webassets-cache/
+tests/coverage/
 tmp/
 tmp/cache/.gitkeep
 venv/
