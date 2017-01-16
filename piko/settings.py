@@ -66,7 +66,7 @@ ENVIRONMENT = 'development'
 
 LANGUAGES = ['en', 'nl']
 
-OPENEXCHANGERATES_API_KEY = 'cb223b6dad54475e84adc046c23930a1'
+#OPENEXCHANGERATES_API_KEY = 'getyourown'
 
 #SECRET_KEY = os.urandom(24)
 
