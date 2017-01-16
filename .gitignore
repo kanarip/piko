@@ -6,3 +6,5 @@ piko/static/.webassets-cache/
 tmp/
 tmp/cache/.gitkeep
 venv/
+venv2/
+venv3/
