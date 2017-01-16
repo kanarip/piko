@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+    Configuration for Sphinx Documentation.
+"""
 #
 # piko documentation build configuration file, created by
 # sphinx-quickstart on Mon Sep 19 10:59:45 2016.
@@ -31,6 +34,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+# pylint: disable=invalid-name
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
@@ -43,14 +47,15 @@ extensions = [
     #'sphinx_paramlinks',
 ]
 
+# pylint: disable=invalid-name
 autodoc_default_flags = [
-        'members',
-        'undoc-members',
-        'private-members',
-#        'special-members',
-#        'inherited-members',
-#        'show-inheritance'
-    ]
+    'members',
+    'undoc-members',
+    'private-members',
+    # 'special-members',
+    # 'inherited-members',
+    # 'show-inheritance'
+]
 
 #autodoc_member_order = 'alphabetical'
 #autodoc_member_order = 'groupwise'
@@ -74,7 +79,11 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'piko'
-copyright = u'2016-%s, Jeroen van Meeuwen' % (datetime.datetime.strftime(datetime.datetime.utcnow(),'%Y'))
+# pylint: disable=redefined-builtin
+copyright = u'2016-%s, Jeroen van Meeuwen' % (
+    datetime.datetime.strftime(datetime.datetime.utcnow(), '%Y')
+)
+
 author = u'Jeroen van Meeuwen'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -170,8 +179,8 @@ html_theme = 'default'
 # html_logo = None
 
 # The name of an image file (relative to this directory) to use as a favicon of
-# the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
-# pixels large.
+# the docs.  This file should be a Windows icon file (.ico) being 16x16 or
+# 32x32 pixels large.
 #
 # html_favicon = None
 
@@ -263,21 +272,21 @@ htmlhelp_basename = 'pikodoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-     # The paper size ('letterpaper' or 'a4paper').
-     #
-     # 'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #
+    # 'papersize': 'letterpaper',
 
-     # The font size ('10pt', '11pt' or '12pt').
-     #
-     # 'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #
+    # 'pointsize': '10pt',
 
-     # Additional stuff for the LaTeX preamble.
-     #
-     # 'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #
+    # 'preamble': '',
 
-     # Latex figure (float) alignment
-     #
-     # 'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    #
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
