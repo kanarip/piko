@@ -22,6 +22,7 @@
         <a name="top"></a>
 
         <div id="nav-header">
+            <a href="{{ url_for('piko.index') }}">{{ _("Home") }}</a>
             {% if g.user %}
             <a href="{{ url_for('piko.profile') }}">{{ _("Profile") }}</a>
             <a href="{{ url_for('piko.logout') }}">{{ _("Logout") }}</a>
@@ -29,6 +30,19 @@
             <a href="{{ url_for('piko.login') }}">{{ _("Login") }}</a>
             {% endif %}
         </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div id="flashes">
+                    <ul class=flashes>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+
+            {% endif %}
+        {% endwith %}
 
         {% block content %}
         {% endblock content %}
@@ -55,7 +69,7 @@
         <br clear="all">
         <hr>
         {% if g.environment == "development" and g.debug == True %}
-        <table>
+        <table style="font-size: 4pt; color: #bbbbbb; width: 60%" align="center">
             <tr><td>{{ _("Time to execute:") }}</td><td>__EXECUTION_TIME__</td></tr>
             <tr><td>{{ _("Country of origin:") }}</td><td>__GEOIP_COUNTRY__</td></tr>
             <tr><td>{{ _("Currency:") }}</td><td>__I18N_CURRENCY__</td></tr>
@@ -63,7 +77,9 @@
             <tr><td>{{ _("1 CHF:") }}</td><td>__I18N_CHFRATE__ {{ currency }}</td></tr>
             <tr><td>{{ _("Language:") }}</td><td>__L10N_LANGUAGE__</td></tr>
             <tr><td>{{ _("Application name:") }}</td><td>__APP_NAME__</td></tr>
-            <tr><td>Cached on:</td><td>{{ now }}</td></tr>
+            <tr><td>{{ _("User ID:") }}</td><td>__USER_ID__</td></tr>
+            <tr><td>{{ _("User ID:") }}</td><td>{{ g.user }}</td></tr>
+            <tr><td>{{ _("Cached on:") }}</td><td>{{ now }}</td></tr>
         </table>
         {% endif %}
 
