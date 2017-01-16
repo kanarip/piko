@@ -20,11 +20,14 @@ import pycountry
 import pygeoip
 
 from piko import App
+from piko.cache import cache
+from piko.utils import empty
+
+# pylint: disable=invalid-name
 app = App('piko')
 
-from piko.cache import cache
-
 geoip = pygeoip.GeoIP('/usr/share/GeoIP/GeoLiteCountry.dat')
+
 
 def country_by_ipaddr(address):
     """
@@ -57,14 +60,16 @@ def country_by_ipaddr(address):
     if country is None:
         country = geoip.country_code_by_addr(address)
 
-    if country == None or country == '':
+    if empty(country):
         country = "CH"
 
     return country
 
+
 def currency_by_ipaddr(address):
     """
-        Resolve the currency used in the country in which an IP address resides.
+        Resolve the currency used in the country in which an IP address
+        resides.
 
         This can be an IPv4 or IPv6 address, and uses
         :py:func:`piko.i18n.country_by_ipaddr` and
@@ -79,6 +84,7 @@ def currency_by_ipaddr(address):
     currency = currency_by_country(country)
 
     return currency
+
 
 def exchange_rate_by_ipaddr(address):
     """
@@ -103,11 +109,15 @@ def exchange_rate_by_ipaddr(address):
 
     return rate
 
+
 @cache.memoize(timeout=86400)
 def exchange_rate(currency):
+    """
+        Provide the current-ish exchange rate for :py:param:`currency`.
+    """
     rates_usd = get_currency_exchange_rates()
 
-    if rates_usd == None:
+    if rates_usd is None:
         if currency == "EUR":
             return 0.95
 
@@ -116,6 +126,7 @@ def exchange_rate(currency):
     rates_chf = convert_exchange_rates(rates_usd)
 
     return rates_chf[currency]
+
 
 @cache.memoize()
 def countries():
@@ -135,33 +146,52 @@ def countries():
             the result -- it does not have a currency.
     """
 
-    countries = {}
-    for code,country in [(x.alpha2,x.name) for x in pycountry.countries if hasattr(x, 'alpha2') and hasattr(x, 'name')]:
-        countries[code] = country
+    _countries = {}
+    for code, country in [
+            (x.alpha2, x.name) for x in pycountry.countries
+            if hasattr(x, 'alpha2') and hasattr(x, 'name')
+    ]:
+
+        _countries[code] = country
 
     # Antarctica has a British and an Australian part, but no currency
-    del countries['AQ']
+    del _countries['AQ']
 
-    return countries
+    return _countries
+
 
 def country_by_code(code):
+    """
+        Return the country name provided a country code.
+    """
     _countries = countries()
-    if _countries.has_key(code):
+
+    if code in _countries:
         return _countries[code]
+
 
 @cache.memoize(timeout=86400)
 def currency_by_country(code):
+    """
+        Retrieve the currency used in a country referred to by the code.
+    """
+    code = code.upper()
+
     if code == "PS":
         return "ILS"
 
-    if currencies.has_key(code.upper()):
+    if code in currencies:
         result = currencies[code.upper()]
         if len(result) >= 1:
             return result[0]
 
+
 @cache.memoize(timeout=86400)
 def country_code_by_name(search):
-    result = [code for code,name in countries().iteritems() if name == search]
+    """
+        Return a country code for a country's name.
+    """
+    result = [code for code, name in countries().iteritems() if name == search]
     if len(result) == 0:
         return None
     elif len(result) == 1:
@@ -169,12 +199,16 @@ def country_code_by_name(search):
     else:
         raise Exception
 
+
 @cache.memoize(timeout=86400)
 def get_currency_exchange_rates():
+    """
+        Obtain the current-ish exchange rates from OpenExchangeRates.
+    """
     from openexchangerates import OpenExchangeRatesClient
     api_key = app.config.get('OPENEXCHANGERATES_API_KEY', None)
 
-    if api_key == None:
+    if api_key is None:
         return
 
     client = OpenExchangeRatesClient(api_key)
@@ -184,6 +218,7 @@ def get_currency_exchange_rates():
     result = client.latest()
 
     return result['rates']
+
 
 @cache.memoize(timeout=86400)
 def convert_exchange_rates(rates_usd):
@@ -198,12 +233,14 @@ def convert_exchange_rates(rates_usd):
 
     rates_usd['USD'] = 1.0
 
-    for currency,rate in rates_usd.iteritems():
+    for currency, rate in rates_usd.iteritems():
         if currency == "CHF":
             rates_chf[currency] = 1
             continue
 
-        rates_chf[currency] = round((float(1 * markup) / float(rates_usd['CHF'])) * float(rate) * markup,5)
+        rates_chf[currency] = round(
+            (markup / float(rates_usd['CHF'])) * float(rate) * markup,
+            5
+        )
 
     return rates_chf
-
