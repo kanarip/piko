@@ -1,15 +1,12 @@
 """
     Render templates from a theme, and cache them.
 """
-from flask import abort
 from flask import g
 from flask import request
 from flask import session
 
 # pylint: disable=no-name-in-module,import-error
 from flask.ext.themes import render_theme_template as _render_theme_template
-from flask.ext.themes import get_themes_list
-from flask.ext.themes import setup_themes
 
 from piko import App
 from piko.cache import cache
